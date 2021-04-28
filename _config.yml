@@ -6,7 +6,7 @@
 carpentry: "bst"
 
 # Overall title for pages.
-title: "Practical considerations for Molecular Dynamics"
+title: "Running Molecular Dynamics with Amber on Compute Canada"
 
 # Email address, no mailto:
 email: "molmodsim@computecanada.ca"
