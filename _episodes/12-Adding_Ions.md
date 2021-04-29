@@ -578,6 +578,7 @@ python ~/bin/plot_energies.py
 {: .language-bash}
 
 *plot_energies.py*:
+
 ~~~
 import pandas as pd
 import matplotlib.pyplot as plt

@@ -102,9 +102,9 @@ div.file-content::before   { background-color: #efefef; }
 div.cpptraj,
 div.cpptraj::before        { background-color: #f7f0f0; }
 div.leap,
-div.leap::before,
+div.leap::before           { background-color: #f3e8e8; } 
 div.vmd,
-div.vmd::before,           { background-color: #ecf0ee; }
+div.vmd::before            { background-color: #ecf0ee; }
 // end: added MolModSim
 
 // Tab panels are used on Setup pages to show instructions for different Operating Systems

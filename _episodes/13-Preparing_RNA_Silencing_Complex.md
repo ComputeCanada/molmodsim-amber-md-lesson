@@ -490,13 +490,13 @@ cd ~/scratch/workshop/pdb/6N4O/RNA_models/simRNA
 >~~~
 >UGGAGUGUGACAAUGGUGUUU CCAUUGUCACACUCCAAA
 >~~~
->{: .string}
+>{: .file-content}
 >
 >A list of residues not allowed to move (we don't want the program to move atoms resolved in the experimental structure).
 >~~~
 > A:1-9,11-18,20-21;B:1-5,9-16
 >~~~
->{: .string}
+>{: .file-content}
 >PDB file matching the sequence. All atoms must be present, and chains must be named A and B. To prepare this file combine the model of chain C, the 5' phosphate from chain_D_model_B5P.pdb, and the model of chain D. Change the residue name to C5 and chain ID to B for the phosphate atoms.
 >
 >~~~
