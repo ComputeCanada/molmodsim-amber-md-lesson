@@ -58,6 +58,7 @@ div.output  { @include cdSetup($color-output); }
 div.vmd             { @include cdSetup($color-vmd); }
 div.leap            { @include cdSetup($color-leap); }
 div.cpptraj         { @include cdSetup($color-leap); }
+div.file-content    { @include cdSetup($color-output); }
 // end: added MolModSim
 
 div.error::before,
