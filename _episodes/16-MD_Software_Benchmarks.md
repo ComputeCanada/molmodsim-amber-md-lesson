@@ -15,7 +15,7 @@ Requesting the right computational resources is essential for fast and efficient
 
 Below are the benchmark results comparing simulations of the same system with several MD packages. These results may give you valuable insight into how fast and efficient you can expect your simulation to run with different packages/resources.
 
-![]({{ root }}/fig/MD-benchmarks.svg)
+![Graph: MD-benchmarks]({{ page.root }}/fig/MD-benchmarks.svg)
 
 The numbers printed on the bars show CPU efficiency.
 
