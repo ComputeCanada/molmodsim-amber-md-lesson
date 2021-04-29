@@ -430,7 +430,7 @@ apply_missing_ends(aD, mD)
 renumber_chain(mD, '1')
 write_model(mD, 'chain_D_model_B.pdb')
 ~~~
-{: .python}
+{: .language-python}
 
 Start python and execute the commands interactively:
 ~~~
