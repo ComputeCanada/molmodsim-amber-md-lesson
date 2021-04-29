@@ -620,6 +620,7 @@ To transfer simulation to GROMACS we need to convert topology and restart file .
 ~~~
 cd ~/scratch/workshop/pdb/1RGG/AMBER_to_GROMACS
 ~~~
+{: .language-bash}
 
 First convert AMBER topology to GROMACS
 ~~~
@@ -642,6 +643,7 @@ gmx make_ndx -f inpcrd.gro <<EOF
 q
 EOF
 ~~~
+{: .language-bash}
 
 Generate positional restraints file for the protein backbone.
 ~~~
@@ -662,7 +664,7 @@ Add definitions of the position restraints to the topology "gromacs.top". Use a 
 ; Name            nrexcl
 Na+          3
 ~~~
-{: .text}
+{: .file-content}
 
 Define position restraints on the input file min.mdp:
 
@@ -670,7 +672,7 @@ Define position restraints on the input file min.mdp:
 ; Turn on position restraints
 define = -D_POSRES
 ~~~
-{: .text}
+{: .file-content}
 
 Convert AMBER restart to GROMACS restart.
 ~~~
@@ -681,7 +683,7 @@ ncrest=pmd.amber.Rst7("rest.rst7")
 amber.velocities=ncrest.vels
 amber.save("restart.gro")
 ~~~
-{:.python}
+{:.language-python}
 
 Convert GROMACS restart to portable trajectory, and make binary topology
 ~~~
