@@ -39,7 +39,7 @@ cd ~/scratch/workshop/pdb/1RGG/AMBER
 module load StdEnv/2020 gcc amber
 tleap
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 source leaprc.water.tip3p
@@ -135,7 +135,7 @@ Execute the script:
 ~~~
 tleap -f solvate_1RGG.leap
 ~~~
-{: .bash}
+{: .language-bash}
 
 ## Generating Input Files for Simulation with *GROMACS*.
 >## What force fields are available in the loaded *GROMACS* module?
@@ -144,7 +144,7 @@ tleap -f solvate_1RGG.leap
 >module load gromacs
 >ls -d $EBROOTGROMACS/share/gromacs/top/*.ff | xargs -n1 basename
 >~~~
->{: .bash}
+>{: .language-bash}
 >~~~
 >amber03.ff		amber99sb-ildn.ff	gromos45a3.ff
 >amber94.ff		amberGS.ff		gromos53a5.ff
@@ -160,7 +160,7 @@ tleap -f solvate_1RGG.leap
 ~~~
 cd ~/scratch/workshop/pdb/1RGG/GROMACS
 ~~~
-{: .bash}
+{: .language-bash}
 
 We can generate GROMACS topology from the complete simulation system prepared previously and saved in the file 1RGG_chain_A_solvated.pdb. For *pdb2gmx* to work correctly we need to rename ions from (Na+, Cl-) to (NA, CL), and rename CYX to CYS:
 
@@ -198,7 +198,7 @@ sed s/"Cl-  Cl-  "/" CL  CL  B"/g |\
 sed s/"Na+  Na+  "/" NA  NA  B"/g |\
 sed s/CYX/CYS/g > 1RGG_chain_A_solvated_gro.pdb
 ~~~
-{: .bash}
+{: .language-bash}
 
 
 Let's make the topology using the *AMBER ff99SBildn* force field and the *tip3* water model:
@@ -207,7 +207,7 @@ gmx pdb2gmx -f 1RGG_chain_A_solvated_gro.pdb -ff amber99sb-ildn -water tip3 -ign
 y
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 Option       |Value| Description                         
 --------------|:---|:-----------------------
@@ -221,7 +221,7 @@ The construct
 y
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 at the end of the command is to automatically confirm 'y' S-S bond. 
 
@@ -244,30 +244,30 @@ gmx pdb2gmx -f ../1RGG_chain_A_prot.pdb -ff amber99sb-ildn -water tip3 -ignh -ch
 y
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 Once the gromacs coordinate file *conf.gro* is created we add a periodic box to it:
 ~~~
 gmx editconf -f conf.gro -o boxed.gro -c -d 1.5 -bt cubic
 ~~~
-{: .bash}
+{: .language-bash}
 The option '-c' positions solute in the middle of the box, the option -d specifies the distance (in nm) between the solute and the box.
 Add water
 ~~~
 gmx solvate -cp boxed.gro -cs spc216.gro -o solvated.gro -p topol.top
 ~~~
-{: .bash}
+{: .language-bash}
  Next, we need to create a binary topology file. For this we need a MD run parameters file. An empy file will be sufficient for now. Using the empty file *'mdrun.mdp'* we can generate the binary topology *'solvated.tpr'* file:
 ~~~
 touch mdrun.mdp
 gmx grompp -f mdrun.mdp -p topol.top -c solvated.gro -o solvated.tpr >& grompp.log
 ~~~
-{: .bash}
+{: .language-bash}
 When the grompp program runs it generates a lot of diagnostic messages and prints out the net charge. We saved the output in the file *'grompp.log'* so that we can find out what is the total charge of the system:
 ~~~
 grep "total charge" grompp.log
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 System has non-zero total charge: -5.000000
 ~~~
@@ -277,13 +277,13 @@ Finally we can use the *GROMACS genion* command to replace random solvent molecu
 ~~~
 $ echo "SOL" | gmx genion -s solvated.tpr -p topol.top -neutral -conc 0.15 -o neutralized.pdb
 ~~~
-{: .bash}
+{: .language-bash}
 
 Let's inspect the last section of the updated topology file:
 ~~~
 tail -n 4 topol.top
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 Protein_chain_A     1
 SOL         11482
@@ -296,7 +296,7 @@ Create a binary topology file with the new topology and run parameters.
 ~~~
 gmx grompp -f minimization.mdp -p topol.top -c neutralized.pdb -o solvated_neutral.tpr
 ~~~
-{: .bash}
+{: .language-bash}
 
 
 You can see that 38 sodium and 33 chloride ions were added to the system.
@@ -307,7 +307,7 @@ You can see that 38 sodium and 33 chloride ions were added to the system.
 >wget http://files.rcsb.org/view/2F4K.pdb
 >gmx pdb2gmx -f 2F4K.pdb -ff amber99sb-ildn -water spce
 >~~~
->{: .bash}
+>{: .language-bash}
 >Why this command fails and how to fix it?
 >> ## Solution
 >> The file contains two noncanonical norleucine aminoacids (NLE65 and 70). GROMACS does not have parameters for this aminoacid. You have two options: replace norleucine with leucine or add norleucine parameters. 
@@ -332,7 +332,7 @@ We could do a two a two stage minimization. In the first stage we restrain all o
 ~~~
 cd ~/scratch/workshop/pdb/1RGG/AMBER/1_minimization
 ~~~
-{: .bash}
+{: .language-bash}
 
 MD programs can do a lot of different things, and every type of calculation has a number of parameters that allow us to control what will be done. To run a minimization we need to make an input file describing exactly what we want to do and how we want to do it:
 
@@ -402,7 +402,7 @@ If minimization is successful we expect to see large negative energies.
 ~~~
 cd ~/scratch/workshop/pdb/1RGG/AMBER/2_heating
 ~~~
-{: .bash}
+{: .language-bash}
 
 #### Molecular dynamics parameters
 
@@ -451,7 +451,7 @@ module load arch/avx2 StdEnv/2020 gcc amber/20
 
 mpiexec pmemd.MPI -O -i heat.in -p prmtop -c minimized.nc -ref inpcrd -r heated.nc -o mdout
 ~~~
-{: .bash}
+{: .language-bash}
 
 This job runs about 2 min on 4 CPUs.
 
@@ -460,7 +460,7 @@ This job runs about 2 min on 4 CPUs.
 ~~~
 cd ~/scratch/workshop/pdb/1RGG/AMBER/3_equilibration
 ~~~
-{: .bash}
+{: .language-bash}
 
 - Turn on restart flag.
 
@@ -497,7 +497,7 @@ module load arch/avx2 StdEnv/2020 gcc  amber/20
 
 mpiexec pmemd.MPI -O -i equilibrate_1.in -p prmtop -c heated.nc -ref inpcrd -r equilibrated_1.nc -o equilibration_1.log
 ~~~
-{: .bash}
+{: .language-bash}
 
 This job runs about 3 min on 4 CPUs.
 
@@ -530,7 +530,7 @@ module load arch/avx2 StdEnv/2020 gcc cuda amber
 
 pmemd.cuda -O  -i equilibrate_2.in -p prmtop -c equilibrated_1.nc  -r equilibrated_2.nc -o equilibration_2.log
 ~~~
-{:.bash}
+{: .language-bash}
 
 ### Analyzing simulation logs
 #### Extract selected energy components from MD log and save in a table using *cpptraj*.
@@ -539,7 +539,7 @@ Use the script *~/bin/extract_energies.sh*:
 ~~~
 extract_energies.sh equilibration_1.log
 ~~~
-{: .bash}
+{: .language-bash}
 
 The contents of the script *~/bin/extract_energies.sh*:
 ~~~
@@ -552,7 +552,7 @@ readdata $log
 writedata energy.dat $log[Etot] $log[TEMP] $log[PRESS] $log[VOLUME] time 0.1
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 - Modify the script to add or remove energy components.
 - Plot data table with any plotting program.
@@ -568,14 +568,14 @@ cd ~/scratch/workshop/pdb/1RGG/AMBER/3_equilibration
 ml StdEnv/2020 python scipy-stack
 python
 ~~~
-{: .bash}
+{: .language-bash}
 
 Read table from the file *energies.dat* into pandas dataframe and plot it:
 
 ~~~
 python ~/bin/plot_energies.py
 ~~~
-{: .bash}
+{: .language-bash}
 
 *plot_energies.py*:
 ~~~
@@ -608,7 +608,7 @@ parmwrite out prmtop_nowat.parm7
 run
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 ## Transferring equilibrated system between simulation packages.
 Simulation packages have different methods and performance. It is useful to be able to transfer a running simulation from one software to another. Imagine that you started your project with GROMACS, but later realized that you need to run a constant pH simulation. You need to switch to AMBER. Want to study conformational transitions? Gaussian accelerated MD is not available in GROMACS. Another reason to move to AMBER/NAMD. 
@@ -627,7 +627,7 @@ module --force purge
 module load arch/avx2 StdEnv/2020 gcc amber gromacs
 python
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 import parmed as pmd
 amber = pmd.load_file("prmtop.parm7", "inpcrd.rst7")
@@ -649,7 +649,7 @@ gmx genrestr -f inpcrd.gro -fc 500.0 -n index.ndx -o backbone.itp<<EOF
 Backbone
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 Add definitions of the position restraints to the topology "gromacs.top". Use a text editor of your choice to insert the following lines at the end of the syste1 molecule block:
 ~~~
@@ -688,6 +688,4 @@ Convert GROMACS restart to portable trajectory, and make binary topology
 gmx trjconv -f restart.gro -o restart.trr
 gmx grompp -p topol.top  -c restart.gro -t restart.trr -f gromacs_production.mdp
 ~~~
-{: .bash}
-
-
+{: .language-bash}

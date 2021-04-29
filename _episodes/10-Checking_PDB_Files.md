@@ -37,7 +37,7 @@ Let's start with downloading a protein structure file:
 cd ~/scratch/workshop/pdb/1ERT
 wget http://files.rcsb.org/view/1ERT.pdb
 ~~~
-{: .bash}
+{: .language-bash}
 
 #### Checking PDB Files for Presence of Non-Protein Molecules
 PDB files are just text files. They contain helpful information such as details of the crystallographic experiment, secondary structure, missing residues, etc. To set up an MD simulation system, we will only need the coordinate section, including ATOM, TER, and HETATM records. 
@@ -54,7 +54,7 @@ Load vmd module and start the program:
 module load StdEnv/2020 gcc vmd
 vmd
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 mol new 1ERT.pdb
@@ -78,7 +78,7 @@ The first line loaded a new molecule from the file 1ERT.pdb. Then we used the **
 >>~~~
 >>grep "^HETATM " 1ERT.pdb | wc -l
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 >>~~~
 >>      46
 >>~~~
@@ -89,7 +89,7 @@ The first line loaded a new molecule from the file 1ERT.pdb. Then we used the **
 >>~~~
 >> grep "^ATOM\|^TER " 1ERT.pdb > protein.pdb
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 >{: .solution}
 {: .challenge}
 
@@ -144,7 +144,7 @@ Installation
 ~~~
 ~/scratch/workshop/scripts/install_check_structure.sh 
 ~~~
-{: .bash}
+{: .language-bash}
 
 Usage
 ~~~
@@ -156,7 +156,7 @@ cd ~/scratch/workshop/pdb/1ERT
 check_structure -i 1ERT.pdb checkall
 check_structure -i 1ERT.pdb -o output.pdb altloc --select A20:A,A43:B,A90:B 
 ~~~
-{: .bash}
+{: .language-bash}
 
 #### Useful Links
 [MDWeb](http://mmb.irbbarcelona.org/MDWeb2) server can help to identify problems with PDB files and visually inspect them. It can also perform complete simulation setup, but options are limited and waiting time in the queue may be quite long.

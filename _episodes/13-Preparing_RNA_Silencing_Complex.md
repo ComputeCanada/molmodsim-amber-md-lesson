@@ -21,7 +21,7 @@ Create working directory:
 mkdir ~/scratch/workshop/pdb/6N4O
 cd ~/scratch/workshop/pdb/6N4O
 ~~~
-{: .bash}
+{: .language-bash}
 
 ## 1. Preparing a protein for molecular dynamics simulations.
 ### 1.1 Adding missing residues to protein structure files.
@@ -34,7 +34,7 @@ Let's see if our PDB file is missing any residues
 ~~~
 grep "REMARK 465" ../6n4o.pdb | less
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 REMARK 465 MISSING RESIDUES
 REMARK 465 THE FOLLOWING RESIDUES WERE NOT LOCATED IN THE
@@ -64,7 +64,7 @@ Download structure and sequence files from PDB database:
 wget https://files.rcsb.org/download/6n4o.pdb
 wget https://www.rcsb.org/fasta/entry/6N4O/download -O 6n4o.fasta
 ~~~
-{: .bash}
+{: .language-bash}
 
 Examine visually the file "6n4o.fasta". There are sequences for 3 chains (A,C,D), each printed in one line. We will need a separate sequence file for each chain. Extract the complete sequences of the protein (chain A), and of the RNA (chains C,D). We will need them later. Can we use grep? We used grep to find a pattern in a file and print out the line containing this sequence. Can we ask grep to print the next line as well? Yes, there is an option -A for this!
 ~~~
@@ -72,7 +72,7 @@ grep -A1 "Chain A" 6n4o.fasta > 6n4o_chain_A.fasta
 grep -A1 "Chain C" 6n4o.fasta > 6n4o_chain_C.fasta
 grep -A1 "Chain D" 6n4o.fasta > 6n4o_chain_D.fasta
 ~~~
-{: .bash}
+{: .language-bash}
 
 Use grep manual to see the meaning of the -A option.
 
@@ -81,7 +81,7 @@ Extract chain A from 6n4o.pdb using VMD
 module load StdEnv/2020 gcc vmd
 vmd
 ~~~
-{: .bash}
+{: .language-bash}
 
 In the VMD console, execute the following commands:
 ~~~
@@ -126,7 +126,7 @@ We have two models of out protein in the directory.
 cd ~/scratch/workshop/pdb/6N4O/protein_models
 ls *model*
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 6N4O_i-TASSER_model_chainA.pdb  6N4O_SWISS_PROT_model_chainA.pdb
@@ -137,7 +137,7 @@ For alignment we want to use only the real data, the residues that are resolved 
 ~~~
 grep "REMARK 465" ../6n4o.pdb | less
 ~~~
-{: .bash}
+{: .language-bash}
 
 Using this information we can compile a list of all residues that have coordinates. We will need this list for several purposes, such as alignment of protein molecules and constraining them during energy minimization and energy equilibration.
 
@@ -188,20 +188,20 @@ Combine the i-TASSER model of residues 1-21 with the SWISS-MODEL.
 ~~~
 grep -h ATOM 6n4o_resid_1-21.pdb 6N4O_SWISS_PROT_model_chainA.pdb > 6n4o_chain_A_complete.pdb
 ~~~
-{: .bash}
+{: .language-bash}
 
 #### 1.3. Mutating residues
 PDB entry 6N4O is the structure of the catalytically inactive hAgo2 mutant D669A. To construct the active form, we need to revert this mutation. Let's use *pdb4amber* utility to mutate ALA669 to ASP:
 ~~~
 pdb4amber -i 6n4o_chain_A_complete.pdb -o 6n4o_chain_A_complete_A669D.pdb -m "669-ALA,669-ASP" 
 ~~~
-{: .bash}
+{: .language-bash}
 
 Verify the result:
 ~~~
 grep 'A 669' 6n4o_chain_A_complete_A669D.pdb
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 ATOM   5305  N   ASP A 669     -19.332  25.617 -27.862  1.00  0.97         N  
@@ -220,7 +220,7 @@ This works, but it is not very smart because the program simply renames ALA to A
 >>~~~
 >>grep 'A 669' 6n4o_chain_A_complete.pdb
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 >>~~~
 >>ATOM   5161  N   ALA A 669     -19.332  25.617 -27.862  1.00  0.97       N
 >>ATOM   5162  CA  ALA A 669     -18.951  24.227 -27.916  1.00  0.97       C
@@ -235,13 +235,13 @@ You can do it using stream editor:
 >>~~~
 >>sed 's/ALA A 669/ASP A 669/g' 6n4o_chain_A_complete.pdb > 6n4o_chain_A_complete_A669D.pdb
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 >>
 >>Verify the result:
 >>~~~
 >>grep 'A 669' 6n4o_chain_A_complete_A669D.pdb
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 >>
 >>~~~
 >>ATOM   5161  N   ASP A 669     -19.332  25.617 -27.862  1.00  0.97       N
@@ -259,13 +259,13 @@ The check_structure utility will do mutation with minimal atom replacement. It w
 source ~/env-biobb/bin/activate
 check_structure -i 6n4o_chain_A_complete.pdb -o 6n4o_chain_A_complete_A669D.pdb mutateside --mut ala669asp  
 ~~~
-{: .bash}
+{: .language-bash}
 
 Verify the result:
 ~~~
 grep 'A 669' 6n4o_chain_A_complete_A669D.pdb
 ~~~
-{: .bash}
+{: .language-bash}
 
 >## Adding functionally important ions.
 >The catalytic site of hAgo2 is comprised of the four amino acids D597, E637, D669 and H807. It is known that hAgo2 requires a divalent metal ion near the catalytic site to slice mRNA. The 6n4o PDB file does not have this ion, but another hAgo2 structure, 4w5o, does. 
@@ -279,7 +279,7 @@ grep 'A 669' 6n4o_chain_A_complete_A669D.pdb
 >>wget https://files.rcsb.org/download/4w5o.pdb
 >>mv 4w5o.pdb ../
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 >>Align 4w5o with 6n4o, renumber and save MG ions.
 >>~~~
 >>mol new ../6n4o.pdb
@@ -315,14 +315,14 @@ virtualenv ~/env-moderna
 source ~/env-moderna/bin/activate
 pip install numpy==1.11.3 biopython==1.58 ModeRNA==1.7.1
 ~~~
-{: .bash}
+{: .language-bash}
 
 Installation is required only once. When you login into your account next time you only need to activate the environment:
 ~~~
 module load StdEnv/2016.4 python/2.7.14
 source ~/env-moderna/bin/activate
 ~~~
-{: .bash}
+{: .language-bash}
 
 Once you install modeRNA program, you will be able to use all its functions. As modeRNA inserts missing fragments only into a single RNA strand, we need to model chains C and D separately. For insertion of missing residues we need to prepare anstructural template and a sequence alignment file for each RNA strand.
 
@@ -332,7 +332,7 @@ Let's go into the directory where we will be working with RNA models.
 mkdir ~/scratch/workshop/pdb/6N4O/RNA_models/modeRNA
 cd ~/scratch/workshop/pdb/6N4O/RNA_models/modeRNA
 ~~~
-{: .bash}
+{: .language-bash}
 
 To make a structural template we will prepare a pdb file containing only RNA from 6n4o.pdb. One file containing both RNA chains (C and D) is sufficient.
 
@@ -340,7 +340,7 @@ To make a structural template we will prepare a pdb file containing only RNA fro
 module load StdEnv/2020 gcc vmd
 vmd
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 mol new ../../6n4o.pdb
@@ -360,7 +360,7 @@ What residues are missing?
 ~~~
 grep "REMARK 465" ../6n4o.pdb 
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 ...                                            
 REMARK 465       A C    10                                                      
@@ -376,7 +376,7 @@ Copy RNA fasta files into the current directory (~/scratch/workshop/pdb/6N4O/RNA
 ~~~
 cp ../../6n4o_chain_C.fasta ../../6n4o_chain_D.fasta . 
 ~~~
-{: .bash}
+{: .language-bash}
 
 Use a text editor of your choice (for example, nano or vi) to edit these two sequence alignment files. Each file must contain two sequences, the sequence of the model to be built and the template sequence matching the structural template. The contents of the files is shown below.
 
@@ -384,7 +384,7 @@ Sequence alignment file for chain C:
 ~~~
 cat 6n4o_chain_C.fasta
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 >Model
 UGGAGUGUGACAAUGGUGUUU
@@ -397,7 +397,7 @@ Sequence alignment file for chain D:
 ~~~
 cat 6n4o_chain_D.fasta
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 >Model
 CCAUUGUCACACUCCAAA
@@ -439,7 +439,7 @@ module load StdEnv/2016.4 python/2.7.14
 source ~/env-moderna/bin/activate
 python
 ~~~
-{: .bash}
+{: .language-bash}
 Or save these commands in the file make_models.py and run it non-iteractively.
 
 The modeRNA program will create two model files, chain_C_model_A.pdb, and chain_D_model_B.pdb. Ensure that the program added all missing residues and did not move any residues present in the original structure file.
@@ -479,7 +479,7 @@ wget https://ftp.users.genesilico.pl/software/simrna/version_3.20/SimRNA_64bitIn
 tar -xf SimRNA_64bitIntel_Linux.tgz
 cd ~/scratch/workshop/pdb/6N4O/RNA_models/simRNA
 ~~~
-{: .bash}
+{: .language-bash}
 
 >## Preparing input files for simulation with SimRNAweb server.
 >If you will be using standalone SimRNA program you can skip this section and proceed to the next one.
@@ -505,7 +505,7 @@ cd ~/scratch/workshop/pdb/6N4O/RNA_models/simRNA
 >chains_CD_model_AB.pdb
 >cat chain_D_model_B.pdb >> chains_CD_model_AB.pdb
 >~~~
->{: .bash}
+>{: .language-bash}
 {: .callout}
 
 #### 3.2. Preparing a simulation with a standalone version of SimRNA.
@@ -517,7 +517,7 @@ mkdir ~/scratch/workshop/pdb/6N4O/RNA_models/simRNA
 cd ~/scratch/workshop/pdb/6N4O/RNA_models/simRNA
 cat ../modeRNA/chain_C_model_A.pdb ../modeRNA/chain_D_model_B.pdb > chains_CD_model_AB.pdb
 ~~~
-{: .bash}
+{: .language-bash}
 
 Next, we apply two modifications to this file. First, we need to add phosphate to the 5' terminal residue of chain D. SimRNA expects all residues to have a P atom. SimRNAweb will add P automatically, but for simulation with a standalone SimRNA program, we need to do it manually. There are several options to add the phosphate.
 
@@ -531,13 +531,13 @@ First, rename the phosphorylated 5' terminal nucleotide C according to AMBER con
 module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 ambertools/20
 source $EBROOTAMBERTOOLS/amber.sh
 ~~~
-{: .bash}
+{: .language-bash}
 
 Launch Leap and load RNA force field:
 ~~~
 tleap -f leaprc.RNA.OL3 -I $EBROOTAMBERTOOLS/dat/leap/lib/
 ~~~
-{: .bash}
+{: .language-bash}
 In the Leap promt execute the commands:
 ~~~
 loadoff terminal_monophosphate.lib
@@ -561,7 +561,7 @@ module --force purge
 module load StdEnv/2020 gcc vmd
 vmd
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 mol new chains_CD_model_AB_5P.pdb
 set sel [atomselect top all]
@@ -600,7 +600,7 @@ In the working directory, make a symbolic link to the 'data' directory located i
 cd ~/scratch/workshop/pdb/6N4O/RNA_models/simRNA
 ln -s ~/SimRNA_64bitIntel_Linux/data data
 ~~~
-{: .bash}
+{: .language-bash}
 Then run the simulation:
 ~~~
 srun -c2 --mem-per-cpu=1000 --time=30:0 \
@@ -608,7 +608,7 @@ srun -c2 --mem-per-cpu=1000 --time=30:0 \
 -P chains_CD_model_AB_5P_frozen.pdb \
 -c config -E 2
 ~~~
-{: .bash}
+{: .language-bash}
 
 The option -E \<number of replicas> turns on replica exchange mode.
 Replica exchange mode is parallelized with OMP. Each replica simulation can run on its own CPU independently of others,  so for the optimal performance allocate the same number of cores (option -c) as the number of replicas (option -E).
@@ -623,13 +623,13 @@ Extract the lowest energy frame from the trajectory of the first replica
 ~/SimRNA_64bitIntel_Linux/trafl_extract_lowestE_frame.py \
 chains_CD_model_AB_5P_frozen.pdb_01.trafl
 ~~~
-{: .bash}
+{: .language-bash}
 Convert the lowest energy frame to PDB format
 ~~~
 ~/SimRNA_64bitIntel_Linux/SimRNA_trafl2pdbs chains_CD_model_AB_5P.pdb \
 chains_CD_model_AB_5P_frozen.pdb_01_minE.trafl 1 AA
 ~~~
-{: .bash}
+{: .language-bash}
 This command will create PDB file of the lowest energy structure from trajectory of replica 1:
 chains_CD_model_AB_5P_frozen.pdb_01_minE-000001_AA.pdb
 We will use this relaxed structure for simulation. Rename it into a shorter name, for example chains_CD_minimized.pdb
@@ -637,7 +637,7 @@ We will use this relaxed structure for simulation. Rename it into a shorter name
 ~~~
 cp chains_CD_model_AB_5P_frozen.pdb_01_minE-000001_AA.pdb chains_CD_minimized.pdb
 ~~~
-{: .bash}
+{: .language-bash}
 
 ![ ](../fig/6n4o_simRNAs.png)
 
@@ -664,7 +664,7 @@ cp ~/scratch/workshop/pdb/6N4O/protein_models/6n4o_chain_A_complete_A669D.pdb .
 cp ~/scratch/workshop/pdb/6N4O/protein_models/4w5o_MG_ions.pdb .
 cp ~/scratch/workshop/pdb/6N4O/RNA_models/simRNA/chains_CD_minimized.pdb .
 ~~~
-{: .bash}
+{: .language-bash}
 
 Launch Leap and load protein and RNA forcefields:
 ~~~
@@ -673,7 +673,7 @@ module load StdEnv/2020  gcc ambertools
 source $EBROOTAMBERTOOLS/amber.sh
 tleap -f leaprc.RNA.OL3 -f leaprc.protein.ff14SB -f leaprc.water.tip3p -I $EBROOTAMBERTOOLS/dat/leap/lib/
 ~~~
-{: .bash}
+{: .language-bash}
 
 Load pdb files into leap, combine them, and solvate the system
 ~~~
@@ -717,7 +717,7 @@ Using this information (MW 110 KDa, charge -6.0, 75000 water molecules) as an in
 >>cd ~/scratch/workshop/pdb/6N4O/simulation/setup/Hpp
 >>tleap -I $EBROOTAMBERTOOLS/dat/leap/lib/
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 >>
 >>~~~
 >>source leaprc.RNA.OL3
@@ -773,7 +773,7 @@ source $EBROOTAMBERTOOLS/amber.sh
 cd ~/scratch/workshop/pdb/6N4O/simulation/setup
 tleap -I $EBROOTAMBERTOOLS/dat/leap/lib/ 
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 source leaprc.RNA.OL3
@@ -799,6 +799,7 @@ quit
 ~~~
 mv inpcrd.pdb inpcrd.rst7 prmtop.parm7 ../
 ~~~
+{: .language-bash}
 
 The force field modification frcmod.phos_nucleic14SB is needed for simulation stability. It modifies AMBER parm10 set for 5' terminal phosphate in nucleic acids, The values are taken from frcmod.phosaa14SB 
 

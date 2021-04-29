@@ -67,7 +67,7 @@ cd  ~/scratch/workshop/pdb/1ERT
 module load StdEnv/2020 gcc/9.3.0 amber
 tleap -f leaprc.protein.ff14SB
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 s = loadpdb protein.pdb
@@ -83,7 +83,7 @@ quit
 module load vmd
 vmd
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 mol new protein.pdb
@@ -119,7 +119,7 @@ References
 >>~~~
 >> cd ~/scratch/workshop/pdb/1RGG
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 >> Save the following commands in a file,  e.g. prep_1RGG.vmd
 >> ~~~
 >># Load 1RGG.pdb into a new (top) molecule
@@ -151,6 +151,6 @@ References
 >>~~~
 >> vmd -e prep_1RGG.vmd
 >>~~~
->>{: .bash}
+>>{: .language-bash}
 > {: .solution}
 {: .challenge}

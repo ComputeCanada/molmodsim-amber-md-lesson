@@ -15,7 +15,7 @@ Requesting the right computational resources is essential for fast and efficient
 
 Below are the benchmark results comparing simulations of the same system with several MD packages. These results may give you valuable insight into how fast and efficient you can expect your simulation to run with different packages/resources.
 
-![](../fig/MD-benchmarks.svg)
+![]({{ root }}/fig/MD-benchmarks.svg)
 
 The numbers printed on the bars show CPU efficiency.
 
@@ -25,7 +25,7 @@ Extend simulation for 10000 steps
 ~~~
 gmx convert-tpr -s topol.tpr -nsteps 10000 -o next.tpr
 ~~~
-{: .bash}
+{: .language-bash}
 
 #### Submission script for a CPU simulation
 ~~~
@@ -98,7 +98,7 @@ module load StdEnv/2020 gcc ambertools python scipy-stack
 source $EBROOTAMBERTOOLS/amber.sh
 parmed prmtop.parm7
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 ParmEd: a Parameter file Editor
@@ -113,7 +113,7 @@ Reading input from STDIN...
 > outparm prmtop_hmass.parm7
 > quit
 ~~~
-{: .bash}
+{: .language-bash}
 
 References:  
 1.[Lessons learned from comparing molecular dynamics engines on the SAMPL5 dataset](https://link.springer.com/article/10.1007%2Fs10822-016-9977-1)   

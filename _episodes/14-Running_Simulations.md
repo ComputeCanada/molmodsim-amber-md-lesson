@@ -21,7 +21,7 @@ cd ~/scratch/workshop/pdb/6N4O/simulation/setup/
 source ~/env-biobb/bin/activate
 check_structure -i inpcrd_noWAT.pdb checkall
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 ...
 8 Steric severe clashes detected
@@ -69,7 +69,7 @@ Let's do a two a two stage minimization. In the first stage we restrain all orig
 ~~~
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/1-minimization
 ~~~
-{: .bash}
+{: .language-bash}
 
 Simulation programs can do a lot of different things, and every type of calculation has a number of parameters that allow us to control what will be done. To run a minimization we need to make an input file describing exactly what we want to do and how we want to do it:
 
@@ -119,14 +119,14 @@ Allocate resources. The workshop resources are limited, do not ask for more than
 ~~~
 salloc --time=2:0:0 --mem-per-cpu=2000 --ntasks=8
 ~~~
-{: .bash}
+{: .language-bash}
 Load AMBER module and run minimization
 ~~~
 module load StdEnv/2020 gcc ambertools
 source $EBROOTAMBERTOOLS/amber.sh 
 mpiexec sander.MPI -O -i min_1.in -p prmtop.parm7 -c inpcrd.rst7 -ref inpcrd.rst7 -r minimized_1.nc -o mdout_1&
 ~~~
-{: .bash}
+{: .language-bash}
 
 The option -O means: overwrite the output files if present.  
 The output from the minimization goes into the file *mdout*. The total energy of the system is printed in the lines beginning with "EAMBER =". If minimization is successful we expect to see large negative energies.
@@ -149,19 +149,19 @@ Continue minimization from the restart coordinates:
 ~~~
 mpiexec sander.MPI -O -i min_2.in -p prmtop.parm7 -c minimized_1.nc -ref inpcrd.rst7 -r minimized_2.nc -o mdout_2&
 ~~~
-{: .bash}
+{: .language-bash}
 
 ### 1.2 Heating
 ~~~
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/2-heating
 ~~~
-{: .bash}
+{: .language-bash}
 
 Try in the allocated interactive shell: 
 ~~~
 mpiexec sander.MPI -O -i heat.in -p prmtop.parm7 -c minimized_2.nc -ref inpcrd.rst7 -r heated.nc -o mdout&
 ~~~
-{: .bash}
+{: .language-bash}
 
 Submit to the queue to run simulation with GPU accelerated pmemd.cuda.
 ~~~
@@ -169,7 +169,7 @@ Submit to the queue to run simulation with GPU accelerated pmemd.cuda.
 ml StdEnv/2020 gcc/8.4.0 cuda/10.2 openmpi/4.0.3 amber
 pmemd.cuda -O -O -i heat.in -p prmtop.parm7 -c minimized_2.nc -ref inpcrd.rst7 -r heated.nc -o heating.log
 ~~~
-{: .bash}
+{: .language-bash}
 
 GPU version runs less than 1 min.
 
@@ -196,7 +196,7 @@ readdata heating.log
 writedata energy.dat heating.log[Etot] heating.log[TEMP] heating.log[PRESS] heating.log[VOLUME] time 0.1
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 Read table into pandas dataframe and plot
 ~~~
@@ -210,14 +210,14 @@ df.plot(subplots=True, x="Time", figsize=(6, 8))
 plt.legend(loc='best')
 plt.show()
 ~~~
-{: .python}
+{: .language-python}
 
 ### 1.3 Equilibration
 #### Constrained equilibration
 ~~~
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/3-equilibration
 ~~~
-{: .bash}
+{: .language-bash}
 
 1. Turn on restart flag 
 2. Shorten BerendsenPressureRelaxationTime to 1000
@@ -243,7 +243,7 @@ Ready for production.
 ~~~
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_namd/4-production
 ~~~
-{: .bash}
+{: .language-bash}
 
 Run for 10 ns
 
@@ -254,6 +254,7 @@ ml StdEnv/2020 gcc/8.4.0 cuda/10.2 openmpi/4.0.3 amber
 
 pmemd.cuda -O -O -i md.in -p prmtop.parm7 -c equilibrated_2.nc -r rest.nc -o md.log
 ~~~
+{: .language-bash}
 
 #### Managing trajectories
 You can remove everything not essential for processing for example water and ions. The following command will remove everything except residues from 1 to 901 and save every second frame in the file mdcrd_nowat.nc
@@ -268,7 +269,7 @@ parmwrite out prmtop_nowat.parm7
 run
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 ## 2. Running simulations with NAMD
 ### 2.1 Energy minimization
@@ -289,14 +290,14 @@ NAMD reads constraints from a specially prepared pdb file describing constraint 
 ~~~
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_namd/1-minimization
 ~~~
-{: .bash}
+{: .language-bash}
 
 As we did in the previous section, in the first round of minimization we restrain all original atoms. Let's prepare PDB file with constraint forces in the occupancy field for this run. Such files can be prepared with VMD. 
 ~~~
 module load vmd
 vmd
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 mol new prmtop.parm7
 mol addfile inpcrd.rst7
@@ -353,7 +354,7 @@ Run 500 steps of energy minimization:
 module load StdEnv/2020 intel/2020.1.217 namd-multicore/2.14
 charmrun ++local +p 8 namd2 min_1.in >&log&
 ~~~
-{:.bash}
+{: .language-bash}
 
 In the second round of minimization constrain only backbone atoms of all original residues.   
 Prepare force constants file:
@@ -375,14 +376,14 @@ Run 1000 minimization steps.
 ~~~
 charmrun ++local +p 8 namd2 min_2.in >&log&
 ~~~
-{:.bash}
+{: .language-bash}
 
 ### 2.2 Heating 
 After energy minimization we have the optimized coordinates that are ready for MD simulation.
 ~~~
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_namd/2-heating
 ~~~
-{: .bash}
+{: .language-bash}
 
 | Parameter                      | Value     | Description
 |--------------------------------|-----------|-----------
@@ -398,7 +399,7 @@ cd ~/scratch/workshop/pdb/6N4O/simulation/sim_namd/2-heating
 ~~~
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_namd/3-equilibration
 ~~~
-{: .bash}
+{: .language-bash}
 
 Read velocities and box from the restart files  
 Shorten BerendsenPressureRelaxationTime to 1000   
@@ -412,7 +413,7 @@ Run for 2 ns.
 ~~~
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_namd/4-production
 ~~~
-{: .bash}
+{: .language-bash}
 Run for 10 ns.  
 
 ## 3. Transferring equilibrated system between simulation packages.
@@ -429,7 +430,7 @@ cp ~/scratch/Ago-RNA_sim/sim_namd/5-equilibration-unconstrained/{equilibration.c
 module load intel vmd
 vmd
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 # Convert velocities
@@ -454,7 +455,7 @@ module load StdEnv/2020 gcc ambertools python scipy-stack
 source $EBROOTAMBERTOOLS/amber.sh
 python
 ~~~
-{: .bash}
+{: .language-bash}
 
 ~~~
 import parmed as pmd
@@ -472,7 +473,7 @@ new_rst7.title = "Created with ParmEd"
 new_rst7.write("restart.rst7")
 quit()
 ~~~
-{: .python}
+{: .language-python}
 
 We converted NAMD restart files to AMBER restart and we can continue simulation with AMBER. AMBER suite includes several simulation codes: sander, sander.MPI, pmemd, pmemd.MPI, pmemd.cuda. Sander is free version, pmemd is commercial. Sander and pmemd are serial (CPU only) programs; sander.MPI and pmemd.MPI are parallel (CPU only); and pmemd.cuda is GPU version.
 
@@ -483,7 +484,7 @@ ml StdEnv/2020 gcc/8.4.0 cuda/10.2 openmpi/4.0.3 amber
 
 pmemd.cuda -O -i pmemd_prod.in -o production.log -p ../../prmtop.parm7 -c restart.rst7
 ~~~
-{:.bash}
+{: .language-bash}
 
 PMEMD is highly optimized to do all computations in one GPU, and it runs exceptionally fast. It CANNOT be used efficiently on more than one GPU because of the overhead from moving data between GPUs.
 
@@ -501,14 +502,14 @@ source $EBROOTAMBERTOOLS/amber.sh
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_gromacs/0-setup
 python
 ~~~
-{: .bash}
+{: .language-bash}
 ~~~
 import parmed as pmd
 amber = pmd.load_file("prmtop.parm7", "inpcrd.rst7")
 amber.save('topol.top')
 amber.save('inpcrd.gro')
 ~~~
-{: .python}
+{: .language-python}
 
 Make index files with groups of atoms that we want to restrain, (one for the original residues and another for backbone of the original residues).
 
@@ -539,12 +540,13 @@ name 7 Orig_prot_backbone
 q
 EOF
 ~~~
+{: .language-bash}
 
 Check groups:
 ~~~
 gmx make_ndx  -n index.ndx 
 ~~~
-{: .bash}
+{: .language-bash}
 
 Generate positional restraints files, one for all original protein atoms, another for the backbone of the original protein residues.
 ~~~
@@ -555,7 +557,7 @@ gmx genrestr -f inpcrd.gro -fc 50.0 -n index.ndx -o orig_prot_backbone.itp<<EOF
 Orig_prot_backbone
 EOF
 ~~~
-{: .bash}
+{: .language-bash}
 
 Add definitions of the position restraints to the topology "gromacs.top". Use a text editor of your choice to insert the following lines at the end of the system1 molecule block:
 ~~~
@@ -607,7 +609,7 @@ gmx grompp -f min.mdp -p gromacs.top -c inpcrd.gro -r inpcrd.gro -o input.tpr<<E
 q
 EOF
 ~~~
-
+{: .language-bash}
 
 
 ~~~
@@ -615,7 +617,7 @@ import parmed as pmd
 amber = pmd.load_file('../prmtop.parm7', '../sim_pmemd/2-production/restart.rst7')
 amber.save('gromacs.top')
 ~~~
-{: .python}
+{: .language-python}
 
 Then convert velocities and coordinates:
 
@@ -630,7 +632,7 @@ vel_rst7 = pmd.load_file('../sim_pmemd/2-production/vel.rst7')
 amber.velocities = vel_rst7.coordinates*20.455
 amber.save('restart.gro')
 ~~~
-{: .python}
+{: .language-python}
 
 ~~~
 module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 gromacs
@@ -638,7 +640,7 @@ gmx trjconv -f restart.gro -o restart.trr
 gmx make_ndx -f restart.gro
 gmx grompp -p gromacs.top  -c restart.gro -t restart.trr -f gromacs_production.mdp
 ~~~
-{: .bash}
+{: .language-bash}
 
 Running simulation
 
@@ -647,4 +649,4 @@ Running simulation
 module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 gromacs
 gmx mdrun -s input.tpr
 ~~~
-{: .bash}
+{: .language-bash}
