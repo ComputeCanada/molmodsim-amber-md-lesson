@@ -589,7 +589,7 @@ df.plot(subplots=True, x="Time", figsize=(6, 8))
 plt.legend(loc='best')
 plt.show()
 ~~~
-{: .python}
+{: .language-python}
 
 ### Managing trajectories
 You can remove from a trajectory all components that are not essential for analysis, for example water and ions. The following command will remove everything except residues from 1 to 96 and save every second frame.
@@ -635,7 +635,7 @@ amber = pmd.load_file("prmtop.parm7", "inpcrd.rst7")
 amber.save('topol.top')
 amber.save('inpcrd.gro')
 ~~~
-{: .python}
+{: .language-python}
 
 Make index file, the default index groups are OK:
 ~~~
@@ -675,6 +675,7 @@ define = -D_POSRES
 {: .file-content}
 
 Convert AMBER restart to GROMACS restart.
+
 ~~~
 import parmed as pmd
 
@@ -683,7 +684,7 @@ ncrest=pmd.amber.Rst7("rest.rst7")
 amber.velocities=ncrest.vels
 amber.save("restart.gro")
 ~~~
-{:.language-python}
+{: .language-python}
 
 Convert GROMACS restart to portable trajectory, and make binary topology
 ~~~
