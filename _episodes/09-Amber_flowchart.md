@@ -19,19 +19,23 @@ Sander is a free simulation engine distributed with AmerTools package. It uses t
 This model provides a convenient programming environment, but the main problem is that the communication required at each step grows with the number of processors limiting parallel scaling. 
 
 ### PMEMD
-PMEMD is an extensively revised version of SANDER. Many optimizations were made to improve both single-processor performance and parallel scaling. To improve performance, PMEMD communicates to each processor only the coordinate information necessary for computing the pieces of the potential energy assigned to it. This code, however, does not support all of the options found in sander.
-
-[Improving the Efficiency of Free Energy Calculations in the Amber Molecular Dynamics Package](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3811123/)
+PMEMD is an extensively revised version of SANDER. Many optimizations were made to improve both single-processor performance and parallel scaling. To improve performance, PMEMD communicates to each processor only the coordinate information necessary for computing the pieces of the potential energy assigned to it. This code, however, does not support all of the options found in sander.  
 
 #### GPU - accelerated PMEMD
 GPU - accelerated PMEMD version of PMEMD (pmemd.cuda) leverages NVIDIA GPUs to perform MD simulations. Pmemd.cuda executable is available only in the commercial AMBER package. It is significantly faster than CPU version. Pmemd.cuda achieves high simulation speed by executing all calculations on a single GPU within its memory. This approach eliminates the bottleneck of moving data between CPU and GPU and allows very efficient GPU usage for systems of practical sizes. Modern GPUs are so fast that communication overhead between GPUs does not allow for parallel scaling to multiple GPUs. Thus the parallel version (pmemd.cuda.MPI) is useful only for some specific types of simulations such as thermodynamic integration and replica-exchange where simulations in different lambda windows (different replicas) can be executed independently on different GPUs. In these simulations the number of lambda windows must be a multiple of the available GPU because individual lambda windows cannot span multiple GPUs but one GPU can run multiple windows.   
+
+#### References
+[Improving the Efficiency of Free Energy Calculations in the Amber Molecular Dynamics Package](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3811123/).  
+
+[Running simulations with GPU accelefration](https://ambermd.org/GPUSupport.php)
+
 
 ### Multi-sander and multi-pmemd simulations
 Multi-sander and multi-pmemd are wrappers around parallel versions of these programs. The wrappers allow to run multiple copies of simulations within a single parallel run. 
 
 ### Summary of AMBER MD engine executables: 
 
-|  Verion     | sander |  pmemd|  
+|  Verion     | sander executables|  pmemd executables|  
 |:---|:---|:---|
 |Serial | sander  | pmemd|      |
 |Parallel | sander.MPI  | pmemd.MPI|   
@@ -45,31 +49,34 @@ Multi-sander and multi-pmemd are wrappers around parallel versions of these prog
 
 ### Information flow in AMBER
 <div class="mermaid" style="height: 30%">
-flowchart TD
+flowchart TB
+
 subgraph "Prepare"
-    A(["PDB files"]) ==> |Load coordinates| C{TLEAP, XLEAP}
-    B([FF files]) --> |Load parameters|C
-    H([LEaP commands])-..->|Build simulation system|C
+    A(["PDB files"]) ==> |Load <br/>coordinates| C{TLEAP, XLEAP}
+    B([FF files]) --> |Load <br/>parameters|C
+    H([LEaP commands])-.->|Build <br/>simulation system|C
 end
-subgraph "Run"
-    C-->|Save topology|D(["prmtop"])
-    C==>|Save coordinates|E(["inpcrd"])
-    D-->|Load topology|F{SANDER, PMEMD}
-    E==>|Load coordinates|F
-    G(["mdin"])-.->|Load simulation parameters|F
+subgraph "Run MD"
+    C-->|Save <br/>topology|D(["prmtop"])
+    C==>|Save <br/>coordinates|E(["inpcrd"])
+    E==>|Load <br/>coordinates|F
+    G(["mdin"])-.->|Load <br/>simulation parameters|F
+    D-->|Load <br/>topology|F{SANDER, <br/>PMEMD}
+    F==>|Save <br/>restart|P([restrt])
+    P==>|Load <br/>restart|F
 end   
-subgraph "Analyze"
-    N(["CPPTRAJ commands"])-.->|Analyze data|J 
-    F===>|Save trajectory|I([mdcrd])
-    F--->|Print energies|L([mdout,mdinfo])
-    I==>|Load frames|J{CPPTRAJ, PYTRAJ}
-    I===>|Load frames|K{MM-PBSA}
-    L-->|Load energies|J
-    R([MM-PBSA commands])-.->|Compute PB energy|K
+subgraph Analyze 
+    N(["CPPTRAJ <br/>commands"])-.->|Run <br/>analysis|J 
+    F===>|Save <br/>trajectory|I([mdcrd])
+    F--->|Print <br/>energies|L([mdout, mdinfo])
+    L-->|Load <br/>energies|J
+    I==>|Load <br/>frames|J{CPPTRAJ, <br/> PYTRAJ}
+    I==>|Load <br/>frames|K{MM-PBSA}
+    R([MM-PBSA <br/>commands])-.->|Compute <br/> PB energy|K
+    J-->S[Results]
+    K--->S[Results]
 end
-    F==>|Save restart|P([restrt])
-    P==>|Load restart|F
-    D---->|Load|J
+    D---->|Load <br/>topology|J
 </div>
 
 
