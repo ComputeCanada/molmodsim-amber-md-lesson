@@ -52,7 +52,7 @@ Multi-sander and multi-pmemd are wrappers around parallel versions of these prog
 flowchart TB
 
 subgraph "Prepare"
-    A(["PDB files"]) ==> |Load <br/>coordinates| C{TLEAP, XLEAP}
+    A(["PDB files"]) ==> |Load <br/>coordinates| C{TLEAP, <br/>XLEAP}
     B([FF files]) --> |Load <br/>parameters|C
     H([LEaP commands])-.->|Build <br/>simulation system|C
 end
@@ -60,7 +60,8 @@ subgraph "Run MD"
     C-->|Save <br/>topology|D(["prmtop"])
     C==>|Save <br/>coordinates|E(["inpcrd"])
     E==>|Load <br/>coordinates|F
-    G(["mdin"])-.->|Load <br/>simulation parameters|F
+    Q([disang])-->|Load <br/>NMR restraints|F
+    G(["mdin"])-.->|Load <br/>run options|F
     D-->|Load <br/>topology|F{SANDER, <br/>PMEMD}
     F==>|Save <br/>restart|P([restrt])
     P==>|Load <br/>restart|F
@@ -71,10 +72,10 @@ subgraph Analyze
     F--->|Print <br/>energies|L([mdout, mdinfo])
     L-->|Load <br/>energies|J
     I==>|Load <br/>frames|J{CPPTRAJ, <br/> PYTRAJ}
-    I==>|Load <br/>frames|K{MM-PBSA}
+    I-->|Load <br/>frames|K{MMPBSA}
     R([MM-PBSA <br/>commands])-.->|Compute <br/> PB energy|K
     J-->S[Results]
-    K--->S[Results]
+    K--->S((Results))
 end
     D---->|Load <br/>topology|J
 </div>
