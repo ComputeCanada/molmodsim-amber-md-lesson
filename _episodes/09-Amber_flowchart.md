@@ -50,7 +50,7 @@ Multi-sander and multi-pmemd are wrappers around parallel versions of these prog
 ### Information flow in AMBER
 <div class="mermaid" style="height: 30%">
 flowchart TB
-
+style Q stroke-dasharray: 5 5
 subgraph "Prepare"
     A(["PDB files"]) ==> |Load <br/>coordinates| C{TLEAP, <br/>XLEAP}
     B([FF files]) --> |Load <br/>parameters|C
