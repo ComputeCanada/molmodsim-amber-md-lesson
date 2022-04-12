@@ -12,6 +12,53 @@ keypoints:
 ---
 
 ## 1. Running simulations with AMBER
+
+### 1.1 AMBER MD engines.
+Amber package includes two MD engines: SANDER and PMEMD. Both programs are available in serial and parallel versions. 
+
+#### SANDER
+SANDER is a free simulation engine distributed with the AmberTools package. For parallel distributed simulations, it uses the MPI (message passing interface). The parallel version of Sander implements replicated data structure. Each CPU computes a portion of the potential energy and corresponding gradients for a set of atoms assigned to it.  A global part of the code then sums the force vector and sends the result to each CPU. The processors then perform a molecular dynamics update step for the assigned atoms and communicate the updated positions to all CPUs in preparation for the subsequent molecular dynamics step.
+
+This model provides a convenient programming environment, but the main problem is that the communication required at each step grows with the number of processors limiting parallel scaling. 
+
+#### PMEMD
+PMEMD is an extensively revised version of SANDER available only in the commercial AMBER package. Developers made many optimizations to improve both single-processor performance and parallel scaling. To avoid data transfer bottleneck, PMEMD communicates to each processor only the coordinate information necessary for computing the pieces of the potential energy assigned to it. This code, however, does not support all of the options found in the SANDER.  
+
+#### GPU-Accelerated PMEMD
+GPU - accelerated PMEMD version of PMEMD (pmemd.cuda) leverages NVIDIA GPUs to perform MD simulations.  It is significantly faster than the CPU version achieving high simulation speed by executing all calculations on a single GPU within its memory. This approach eliminates the bottleneck of moving data between CPU and GPU and allows very efficient GPU usage.  
+
+**<font color="red">Modern GPUs are so fast that communication overhead between GPUs does not allow for parallel scaling of an MD simulation to two or more GPUs.</font>**
+
+While you can run a single simulation on several GPUs using the parallel PMEMD GPU version (pmemd.cuda.MPI) it will run slower than on a single GPU. Parallel GPU version is useful only for specific simulations such as thermodynamic integration and replica-exchange MD. These types of jobs involve several completely independent simulations that can be executed concurrently on different GPUs. PMEMD allows running multiple copies of simulations within a single parallel run via the multi-pmemd mechanism described below. 
+
+#### Multi-sander and multi-pmemd simulations
+Multi-sander and multi-pmemd are wrappers around parallel versions of these programs. These wrappers are invoked by preparing special input files. The wrappers allow running multiple copies of simulations within a single parallel job. The multi-sander and multi-pmemd mechanisms are also utilized for methods requiring multiple simulations to communicate with one another, such as thermodynamic integration and replica exchange molecular dynamics.
+
+#### Summary of available AMBER MD executables: 
+
+|  Verion     | SANDER |  PMEMD |  
+|:---|:---|:---|
+|Serial | sander  | pmemd|      |
+|Parallel | sander.MPI  | pmemd.MPI|   
+|Single GPU, default link| -  | **pmemd.cuda** -> pmemd.cuda_SPFP|
+|Single GPU, single precision| -  | pmemd.cuda_SPFP|   
+|Single GPU, double precision| -  | pmemd.cuda_DPFP|
+|Multi GPU, default link| -  | **pmemd.cuda.MPI** -> pmemd.cuda_SPFP.MPI|
+|Multi GPU, single precision| -  | pmemd.cuda_SPFP.MPI|   
+|Multi GPU, double precision| -  | pmemd.cuda_DPFP.MPI|
+
+### Performance benchmarks
+
+
+![Graph: AMBER benchmarks]({{ page.root }}/fig/AMBER-benchmarks.svg)
+
+#### References
+1. [An overview of the Amber biomolecular simulation package](https://wires.onlinelibrary.wiley.com/doi/10.1002/wcms.1121)
+2. [Running simulations with GPU acceleration](https://ambermd.org/GPUSupport.php)
+3. [Routine Microsecond Molecular Dynamics Simulations with AMBER on GPUs. 1. Generalized Born](https://pubmed.ncbi.nlm.nih.gov/22582031/)
+4. [Routine Microsecond Molecular Dynamics Simulations with AMBER on GPUs. 2. Explicit Solvent Particle Mesh Ewald](https://pubmed.ncbi.nlm.nih.gov/26592383/)
+
+
 ### 1.1 Energy minimization.
 Before simulating a system we need to relax it. Any atomic clashes must be resolved, and potential energy minimized to avoid unphysically large forces that can crash a simulation. 
 
@@ -650,3 +697,5 @@ module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 gromacs
 gmx mdrun -s input.tpr
 ~~~
 {: .language-bash}
+
+

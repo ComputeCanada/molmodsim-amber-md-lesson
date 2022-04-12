@@ -71,7 +71,7 @@ i=24
 ax.text(rate[i]-6, i-0.1, "{:.1f}".format(rate[i]*100/(gmx_serial*256))+"%", color="white")
 
 
-plt.savefig('MD-benchmarks.svg', dpi=600)
+#plt.savefig('MD-benchmarks.svg', dpi=600)
 
-#plt.show()
+plt.show()
 

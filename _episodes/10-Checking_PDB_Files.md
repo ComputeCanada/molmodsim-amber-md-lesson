@@ -12,8 +12,12 @@ objectives:
 keypoints:
 - "Small errors in the input structure may cause MD simulations to became unstable or give unrealistic results."
 ---
+For this lesson, we will go over the steps for setting up a fully solvated protein system for simulation with AMBER/NAMD.
 
-In this lesson we will go through the steps of setting up a fully solvated protein system for simulation with AMBER/NAMD and GROMACS. While there are many commercial programs and interactive graphical interfaces designed to assist with system preparation. While these tools are easy to use and don't require as much learning efforts as command line tools, they are offer only a limited functionality, and most importantly results obtained with WEB/GUI tools are not reproducible and prone to human error. Therefore, we will focus on system preparation using only scriptable command line driven tools. The emphasis of this lesson is to expose you to the various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One of the advantages of such approach is that once a workflow script have been developed it can be easily modified for other systems or conditions (for example if an updated version of pdb file is released, you can prepare a new simulation system with a single click).
+Many commercial programs and interactive graphical interfaces are available to help prepare the system. These tools are easy to use and do not require as much learning effort as command-line tools, however, the functionality is limited, and results obtained with WEB/GUI tools are not reproducible and prone to human error. Therefore, we will focus on preparing the system using only scriptable command-line-driven tools. This lesson is intended to expose you to various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One benefit of this approach is that once a workflow script has been developed, it can be easily adapted to other systems or conditions (for example, if a new pdb file is released, you can prepare a new simulation system with one click).
+
+Before we can successfully import a PDB file into LEAP and produce the system topology file, we need to ensure that the original files are free from errors and the molecules we want to simulate are chemically correct.
+
 
 ## Important Things to Check in a PDB File
 Small errors in the input structure may cause MD simulations to become unstable or give unrealistic results. The most common problems in PDB files include:
@@ -27,9 +31,7 @@ Small errors in the input structure may cause MD simulations to become unstable 
 - di-sulfide bonds
 - wrong assignment of the N and O atoms in the amide groups of ASN and GLN, and the N and C atoms in the imidazole ring of HIS
 
-Some problems can be identified and corrected automatically (e.g. missing atoms and some clashes) while other may have multiple solutions (e.g. alternate conformations, several protein chains, non-protein molecules, missing residues) and require your decision.
-
-In this section we will learn how to identify and correct for multiple chains, alternate conformations, non-protein molecules, and disulphide bonds.  
+Several problems can be identified and corrected automatically (such as missing atoms and some steric clashes), while others may have more than one solution  and require your decision. In this section, you will learn how to recognize and correct problems associated with multiple chains, alternate conformations, non-protein molecules, and disulphide bonds.
 
 #### Downloading a Protein Structure File from PDB
 Let's start with downloading a protein structure file:
@@ -40,18 +42,18 @@ wget http://files.rcsb.org/view/1ERT.pdb
 {: .language-bash}
 
 #### Checking PDB Files for Presence of Non-Protein Molecules
-PDB files are just text files. They contain helpful information such as details of the crystallographic experiment, secondary structure, missing residues, etc. To set up an MD simulation system, we will only need the coordinate section, including ATOM, TER, and HETATM records. 
+PDB files are essentially text files containing important structural information, as well as information about crystallographic experiments, secondary structures, and residues that are missing. To set up an MD simulation system, we will only need the coordinate section, which includes ATOM, TER, and HETATM records. 
 
-The lines beginning with "ATOM" present the atomic coordinates for standard amino acids and nucleotides. The terminal atom of a protein chain is given in the "TER" record. "HETATM" record type is used for all other chemical compounds. Both of these record types use a simple fixed-column format described [here](https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM). 
+The lines beginning with "ATOM" represent the atomic coordinates for standard amino acids and nucleotides. "TER" records indicate which atoms are at the terminal of a protein chain. For chemical compounds other than proteins or nucleic acids, the "HETATM" record type is used. Record types of both types use a simple fixed-column format explained [here](https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM). 
 
+A PDB file containing any molecules other than proteins or nucleic acids needs special treatment. It is common for PDB files to contain solvents, ions, lipid molecules, protein co-factors, e.t.c. In some cases, these extra components are necessary for the protein function and should be included in the simulation. It is common to add compounds to facilitate crystallization. These compounds are usually not necessary for simulation. In this introductory lesson, we won't consider them.
 
-Any non-protein molecules present in a PDB file require special treatment. In general, PDB files may contain solvents, ions, lipid molecules, protein co-factors, e.t.c. In some cases, these extra components are essential for protein function and should be included in the simulation. Often, some compounds are added to facilitate crystallization and are not essential. In this introductory lesson, we will ignore such compounds.
+Let's select only protein atoms and save them in a new file called "protein.pdb". We will be using [VMD](https://www.ks.uiuc.edu/Research/vmd/) for this.
 
- Let's select only protein atoms and save them in the new file "protein.pdb". We will use [VMD](https://www.ks.uiuc.edu/Research/vmd/) to carry out this task. 
 
 Load vmd module and start the program:
 ~~~
-module load StdEnv/2020 gcc vmd
+ml vmd
 vmd
 ~~~
 {: .language-bash}
@@ -63,7 +65,12 @@ $prot writepdb protein.pdb
 quit
 ~~~
 {: .vmd}
-The first line loaded a new molecule from the file 1ERT.pdb. Then we used the **atomselect** method to select all protein atoms from the top molecule. VMD has a powerful Atom Selection Language described [here](https://www.ks.uiuc.edu/Research/vmd/vmd-1.3/ug/node132.html). Finally we saved the selection in the file "protein.pdb".
+The first line of code loads a new molecule from 1ERT.pdb. Using the **atomselect** method, we then select all protein atoms from the top molecule. 
+
+The Atom Selection Language has many capabilities.You can learn more about it by visiting the following [webpage](https://www.ks.uiuc.edu/Research/vmd/vmd-1.3/ug/node132.html). 
+
+Finally, we store the selection in a file named "protein.pdb".
+
 
 >## Selecting ATOM Records Using Shell Commands
 >Standard Linux text searching utility `grep` can find and print all "ATOM" records from a PDB file. This is a good example of using Unix command line, and `grep` is very useful for many other purposes such as finding important things in log files. `Grep` searches for a given pattern in files and prints out each line that matches a pattern. 
@@ -123,7 +130,7 @@ Sometimes you may want to compare simulations starting from different initial co
 >>  
 >>~~~
 >>mol new 1ERT.pdb
->>set s [atomselect top "(protein and altloc '') or (altloc B and resid 20) or >(altloc A and resid 43 90)"]
+>>set s [atomselect top "(protein and altloc '') or (altloc B and resid 20) or (altloc A and resid 43 90)"]
 >>$s writepdb protein_20B_43A_90A.pdb
 >>quit
 >>~~~
