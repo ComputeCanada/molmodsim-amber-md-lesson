@@ -9,7 +9,7 @@ carpentry: "bst"
 title: "Running Molecular Dynamics with Amber on Compute Canada"
 
 # Email address, no mailto:
-email: "molmodsim@computecanada.ca"
+email: "support@tech.alliancecan.ca?Subject=[MolModSim]+Molecular+Dynamics+workshop"
 
 # Life cycle stage of the lesson
 # possible values: "pre-alpha", "alpha", "beta", "stable"
@@ -35,9 +35,9 @@ swc_github: "https://github.com/swcarpentry"
 swc_site: "https://software-carpentry.org"
 swc_pages: "https://swcarpentry.github.io"
 lc_site: "https://librarycarpentry.github.io/"
-template_repo: "https://github.com/swcarpentry/styles"
-example_repo: "https://github.com/swcarpentry/lesson-example"
-example_site: "https://swcarpentry.github.com/lesson-example"
+template_repo: "https://github.com/acenet-arc/cc-carpentries-styles.git"
+example_repo: "https://github.com/carpentries/lesson-example"
+example_site: "https://carpentries.github.io/lesson-example"
 workshop_repo: "https://github.com/swcarpentry/workshop-template"
 workshop_site: "https://swcarpentry.github.io/workshop-template"
 training_site: "https://swcarpentry.github.io/instructor-training"
