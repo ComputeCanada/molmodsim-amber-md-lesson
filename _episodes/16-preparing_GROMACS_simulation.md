@@ -1,25 +1,18 @@
 ---
-title: "Preparing GROMACS simulation system"
+title: "Preparing a system for simulation with GROMACS"
 teaching: 30
 exercises: 5
 questions:
-- "Why the simulation system should be neutralized?"
-- "How to add water and ions to a simulation system?"
-- "How to choose size and shape of a solvent box?"
+- "How to Prepare Input Files for Simulation with GROMACS?"
 objectives:
-- "Understand why it is necessary to neutralize the simulation system."
-- "Neutralize a system."
-- "Solvate a macromolecule."
-- "Add ions to a simulation system to mimic a salt solution."
-- "Generate molecular topology for simulation with GROMACS and NAMD."
+- "Learn to Generate Input Files for Simulation with GROMACS"
+
 keypoints:
-- "Simulation system must be neutralized by adding counter-ions to obtain the correct electrostatic energy."
-- "Ions are added to a simulations system to mimic composition of a local macromolecule environment."
-- "Solvent box should be large enough to allow for unrestricted conformational dynamics of a macromolecule."
+- " "
 ---
 
-## Generating Input Files for Simulation with *GROMACS*.
->## What force fields are available in the loaded *GROMACS* module?
+## Generating Input Files for Simulation with GROMACS.
+>## What force fields are available in the loaded GROMACS module?
 >When the *GROMACS* module is loaded the environment variable *EBROOTGROMACS* will be set. This variable is pointing to the GROMACS installation directory. Knowing where the *GROMACS* installation is we can find out what force fields are available:
 >~~~
 >module load gromacs
@@ -36,7 +29,7 @@ keypoints:
 >{: .output}
 {: .callout}
 
-### Generate *GROMACS* Topology and Coordinate Files from the Solvated System.
+### Generate GROMACS Topology and Coordinate Files from the Solvated System.
 
 ~~~
 cd ~/scratch/workshop/pdb/1RGG/GROMACS

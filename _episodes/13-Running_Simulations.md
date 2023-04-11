@@ -1,21 +1,17 @@
 ---
-title: "Running Simulations with AMBER"
+title: "Running Molecular Dynamics Simulations with AMBER"
 teaching: 30
 exercises: 5
 questions:
-- "Why the simulation system should be neutralized?"
-- "How to add water and ions to a simulation system?"
-- "How to choose size and shape of a solvent box?"
+- "What simulation programs are available in the AMBER package?"
+- "How to minimize energy?"
+- "How to heat up a simulation system?"
+- "How to equilibrate a simulation system?"
 objectives:
-- "Understand why it is necessary to neutralize the simulation system."
-- "Neutralize a system."
-- "Solvate a macromolecule."
-- "Add ions to a simulation system to mimic a salt solution."
-- "Generate molecular topology for simulation with GROMACS and NAMD."
+- "Learn how to minimize energy of a system."
+- "Learn how to heat up and equilibrate a simulation."
 keypoints:
-- "Simulation system must be neutralized by adding counter-ions to obtain the correct electrostatic energy."
-- "Ions are added to a simulations system to mimic composition of a local macromolecule environment."
-- "Solvent box should be large enough to allow for unrestricted conformational dynamics of a macromolecule."
+- " "
 ---
 
 ### AMBER MD engines.
@@ -66,7 +62,7 @@ The general minimization strategy is first to restrict all solute atoms with the
 We could do a two a two stage minimization. In the first stage we restrain all original atoms. In the second stage we restrain only the original backbone atoms. Our example protein is very small and we have limited time, so we skip the first step and restrain only protein backbone.
 
 ~~~
-cd ~/scratch/workshop/pdb/1RGG/AMBER/1_minimization
+cd ~/workshop/pdb/1RGG/AMBER/1_minimization
 ~~~
 {: .language-bash}
 
@@ -136,7 +132,7 @@ If minimization is successful we expect to see large negative energies.
 
 ### Heating
 ~~~
-cd ~/scratch/workshop/pdb/1RGG/AMBER/2_heating
+cd ~/workshop/pdb/1RGG/AMBER/2_heating
 ~~~
 {: .language-bash}
 
@@ -193,7 +189,7 @@ This job runs about 2 min on 4 CPUs.
 ### Equilibration
 #### Constrained equilibration
 ~~~
-cd ~/scratch/workshop/pdb/1RGG/AMBER/3_equilibration
+cd ~/workshop/pdb/1RGG/AMBER/3_equilibration
 ~~~
 {: .language-bash}
 
@@ -237,8 +233,8 @@ Submission script for GPU job *submit_1.sh*:
 #!/bin/bash
 #SBATCH --mem-per-cpu=4000 --time=3:0:0 --ntasks=1 --gres=gpu:v100:1 --partition=all_gpus
 ml --force purge
-ml StdEnv/2020 gcc/9.3.0 cuda/11.0  openmpi/4.0.3 amber/20.9-20.15
-srun pmemd.cuda -O -i equilibrate_1.in -p prmtop -c heated.nc -ref inpcrd -r equilibrated_1.nc -o equilibration_1.log
+ml StdEnv/2020 gcc/9.3.0 cuda/11.0 openmpi/4.0.3 amber/20.9-20.15
+pmemd.cuda -O -i equilibrate_1.in -p prmtop -c heated.nc -ref inpcrd -r equilibrated_1.nc -o equilibration_1.log
 ~~~
 {: .language-bash}
 
@@ -270,7 +266,6 @@ Submission script *submit_2.sh*
 #SBATCH --mem-per-cpu=4000 --time=3:0:0 --ntasks=1 --gres=gpu:v100:1 --partition=all_gpus
 ml --force purge
 ml StdEnv/2020 gcc/9.3.0 cuda/11.0 openmpi/4.0.3 amber/20.9-20.15
-srun pmemd.cuda -O -i equilibrate_1.in -p prmtop -c heated.nc -ref inpcrd -r equilibrated_1.nc -o equilibration_1.log
 
 pmemd.cuda -O  -i equilibrate_2.in -p prmtop -c equilibrated_1.nc  -r equilibrated_2.nc -o equilibration_2.log
 ~~~
@@ -281,7 +276,7 @@ Because NAMD natively supports AMBER topology files, simulating a system prepare
 
 In the worksop data, you will find example simulation input files for minimization, heating and equilibration:
 ~~~
-ls ~/scratch/workshop/pdb/6N4O/simulation/sim_namd
+ls ~/workshop/pdb/6N4O/simulation/sim_namd
 1-minimization  2-heating  3-equilibration  4-production
 ~~~
 {: .language-bash}
@@ -289,7 +284,7 @@ ls ~/scratch/workshop/pdb/6N4O/simulation/sim_namd
 ### Analyzing simulation logs
 #### Extract selected energy components from MD log and save in a table using *cpptraj*.
 
-Use the script *~/bin/extract_energies.sh*:
+Use the script `~/bin/extract_energies.sh`:
 ~~~
 mkdir ~/bin
 nano ~/bin/extract_energies.sh
@@ -311,8 +306,10 @@ EOF
 
 Extract selected energy components. 
 ~~~
-cd ~/scratch/workshop/pdb/1RGG/AMBER//3_equilibration/
-bash extract_energies.sh equilibration_1.log
+cd ~/workshop/pdb/1RGG/AMBER/3_equilibration/
+ml purge
+ml StdEnv/2020 gcc/9.3.0 cuda/11.4 ambertools/22
+bash extract_energies.sh equilibration_2.log
 ~~~
 {: .language-bash}
 
@@ -326,7 +323,7 @@ Connect VNC to the node running vncserver.
 
 On the node load the python module:
 ~~~
-cd ~/scratch/workshop/pdb/1RGG/AMBER/3_equilibration
+cd ~/workshop/pdb/1RGG/AMBER/3_equilibration
 ml StdEnv/2020 python scipy-stack
 python
 ~~~
@@ -350,7 +347,8 @@ df.columns=["Time", "Etot", "Temp", "Press", "Volume"]
 
 df.plot(subplots=True, x="Time", figsize=(6, 8))
 plt.legend(loc='best')
-plt.show()
+plt.savefig('energies.png')
+# plt.show()
 ~~~
 {: .language-python}
 
@@ -377,19 +375,19 @@ EOF
 Simulation packages have different methods and performance. It is useful to be able to transfer a running simulation from one software to another. Imagine that you started your project with GROMACS, but later realized that you need to run a constant pH simulation. You need to switch to AMBER. Want to study conformational transitions? Gaussian accelerated MD is not available in GROMACS. Another reason to move to AMBER/NAMD. 
 Want to apply custom forces - move to NAMD.
 
-#### Moving simulation from AMBER to GROMACS.
-To transfer simulation to GROMACS we need to convert topology and restart file .
+### Moving simulation from AMBER to GROMACS.
+To transfer simulation to GROMACS we need to convert topology and restart files.
 
 ~~~
-cd ~/scratch/workshop/pdb/1RGG/AMBER_to_GROMACS
+cd ~/workshop/pdb/1RGG/AMBER_to_GROMACS
 ~~~
 {: .language-bash}
 
-First convert AMBER topology to GROMACS
+#### Convert AMBER topology to GROMACS
 ~~~
 module --force purge
-module load StdEnv/2020 gcc/9.3.0 cuda/11.0 openmpi/4.0.3 amber/20.9-20.15 gromacs/2021.2 scipy-stack
-python
+module load StdEnv/2020 gcc/9.3.0 cuda/11.0 openmpi/4.0.3 
+module load amber/20.9-20.15 gromacs/2021.2 scipy-stack python
 ~~~
 {: .language-bash}
 ~~~
@@ -400,7 +398,8 @@ amber.save('inpcrd.gro')
 ~~~
 {: .language-python}
 
-Make index file, the default index groups are OK:
+#### Make index file
+The default index groups are OK:
 ~~~
 gmx make_ndx -f inpcrd.gro <<EOF
 q
@@ -408,7 +407,7 @@ EOF
 ~~~
 {: .language-bash}
 
-Generate positional restraints file for the protein backbone.
+#### Generate positional restraints file for the protein backbone.
 ~~~
 gmx genrestr -f inpcrd.gro -fc 500.0 -n index.ndx -o backbone.itp<<EOF
 Backbone
@@ -422,14 +421,13 @@ Add definitions of the position restraints to the topology "gromacs.top". Use a 
 #include "backbone.itp"
 #endif
 
-
 [ moleculetype ]
 ; Name            nrexcl
 Na+          3
 ~~~
 {: .file-content}
 
-Define position restraints on the input file min.mdp:
+Define position restraints in the input file min.mdp:
 
 ~~~
 ; Turn on position restraints
@@ -437,7 +435,7 @@ define = -D_POSRES
 ~~~
 {: .file-content}
 
-Convert AMBER restart to GROMACS restart.
+#### Convert AMBER restart to GROMACS restart.
 
 ~~~
 import parmed as pmd
@@ -449,7 +447,7 @@ amber.save("restart.gro")
 ~~~
 {: .language-python}
 
-Convert GROMACS restart to portable trajectory, and make binary topology
+#### Convert GROMACS restart to portable trajectory and make binary topology
 ~~~
 gmx trjconv -f restart.gro -o restart.trr
 gmx grompp -p topol.top  -c restart.gro -t restart.trr -f gromacs_production.mdp

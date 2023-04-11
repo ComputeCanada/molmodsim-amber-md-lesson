@@ -37,15 +37,15 @@ Random placement of ions will generate a system in the completely dissociated, e
 Let's neutralize 1RGG protein using the *leap* module. We will add ions prior to solvation so that the potential from un-equilibrated water will not interfere with ion placement:
 
 ~~~
-cd ~/scratch/workshop/pdb/1RGG/AMBER
-ml ambertools
+cd ~/workshop/pdb/1RGG/AMBER
+module load gcc/9.3.0 cuda/11.4 ambertools/22
 tleap
 ~~~
 {: .language-bash}
 
 ~~~
-source leaprc.water.tip3p
-source leaprc.protein.ff14SB
+source leaprc.water.opc
+source leaprc.protein.ff19SB
 s = loadpdb ../1RGG_chain_A_prot.pdb
 charge s
 addions s Na+ 0
@@ -121,8 +121,8 @@ quit
 ### A complete script for preparing coordinates and the topology in LEAP
 Save the following commands in a file, e.g. solvate_1RRG.leap
 ~~~
-source leaprc.water.tip3p
-source leaprc.protein.ff14SB
+source leaprc.water.opc
+source leaprc.protein.ff19SB
 s = loadpdb ../1RGG_chain_A_prot.pdb
 addions s Na+ 0
 solvatebox s SPCBOX 15 iso
@@ -144,4 +144,10 @@ tleap -f solvate_1RRG.leap
 The process of molecular dynamics system setup can be automated by saving the whole sequence of commands into a text file. This file (shell script) can be easily modified to prepare simulation systems from other PDB structure files or used to reproduce your simulation setup. All system preparation steps can be completed in seconds with the script.
 
 You can download an example shell script that performs all preparation steps [here]({{ page.root }}/code/run_setup.sh). The script downloads the molecular structure file from PDB and generates input files for simulation with AMBER, NAMD, and GROMACS.
+
+### How to create ligand topology
+
+[Automated Topology Builder](https://atb.uq.edu.au/index.py)
+
+
 

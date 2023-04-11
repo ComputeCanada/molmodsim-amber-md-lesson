@@ -1,5 +1,5 @@
 ---
-title: "Checking PDB Files"
+title: "Checking and Cleaning PDB Files"
 teaching: 20
 exercises: 10
 questions:
@@ -12,12 +12,10 @@ objectives:
 keypoints:
 - "Small errors in the input structure may cause MD simulations to became unstable or give unrealistic results."
 ---
-For this lesson, we will go over the steps for setting up a fully solvated protein system for simulation with AMBER/NAMD.
 
-Many commercial programs and interactive graphical interfaces are available to help prepare the system. These tools are easy to use and do not require as much learning effort as command-line tools, however, the functionality is limited, and results obtained with WEB/GUI tools are not reproducible and prone to human error. Therefore, we will focus on preparing the system using only scriptable command-line-driven tools. This lesson is intended to expose you to various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One benefit of this approach is that once a workflow script has been developed, it can be easily adapted to other systems or conditions (for example, if a new pdb file is released, you can prepare a new simulation system with one click).
+Many commercial programs and interactive graphical interfaces such as CHARMM-GUI are available to help prepare the system. These tools are easy to use and do not require as much learning effort as command-line tools, however, the functionality is limited, and results obtained with WEB/GUI tools are not reproducible and prone to human error.  Therefore, we will focus on preparing the system using only scriptable command-line-driven tools. This lesson is intended to expose you to various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One benefit of this approach is that once a workflow script has been developed, it can be easily adapted to other systems or conditions (for example, if a new pdb file is released, you can prepare a new simulation system with one click).
 
 Before we can successfully import a PDB file into LEAP and produce the system topology file, we need to ensure that the original files are free from errors and the molecules we want to simulate are chemically correct.
-
 
 ## Important Things to Check in a PDB File
 Small errors in the input structure may cause MD simulations to become unstable or give unrealistic results. The most common problems in PDB files include:
@@ -36,7 +34,7 @@ Several problems can be identified and corrected automatically (such as missing 
 #### Downloading a Protein Structure File from PDB
 Let's start with downloading a protein structure file:
 ~~~
-cd ~/scratch/workshop/pdb/1ERT
+cd ~/workshop/pdb/1ERT
 wget http://files.rcsb.org/view/1ERT.pdb
 ~~~
 {: .language-bash}
@@ -53,7 +51,7 @@ Let's select only protein atoms and save them in a new file called "protein.pdb"
 
 Load vmd module and start the program:
 ~~~
-ml vmd
+ml StdEnv/2020 vmd
 vmd
 ~~~
 {: .language-bash}
@@ -141,7 +139,7 @@ Sometimes you may want to compare simulations starting from different initial co
 
 #### Checking PDB Files for cross-linked cysteines.
 Disulfide bonds are covalent bonds between the sulfur atoms of two cysteine residues. They are very important for the stabilization of protein structure.
-Disulfide bonds are easy to spot in PDB files with any visualization program. For example, [MDWeb](http://mmb.irbbarcelona.org/MDWeb2) server can identify disulfide bonds and many other problems in PDB files. GROMACS `pdb2gmx` utility can automatically add S-S bonds to the topology based on the distance between sulfur atoms (option *-ss*).  
+Disulfide bonds are easy to spot in PDB files with any visualization program. For example, [MDWeb](http://mmb.irbbarcelona.org/MDWeb2)server can identify disulfide bonds and many other problems in PDB files. GROMACS `pdb2gmx` utility can automatically add S-S bonds to the topology based on the distance between sulfur atoms (option *-ss*).  
 For simulation preparation with the AMBER `tleap` program, cross-linked cysteines must be renamed from "CYS" to "CYX" to distinguish them from normal cysteines. Then the bond between them must be made manually using the `bond` command.
 
 #### Check_structure utility from BioExcel building blocks project
@@ -149,17 +147,17 @@ For simulation preparation with the AMBER `tleap` program, cross-linked cysteine
 
 Installation
 ~~~
-~/scratch/workshop/scripts/install_check_structure.sh 
+~/workshop/scripts/install_check_structure.sh 
 ~~~
 {: .language-bash}
 
 Usage
 ~~~
-module load StdEnv/2020 python
+module load StdEnv/2020 python/3.10
 source ~/env-biobb/bin/activate
 
-check_structure commands
-cd ~/scratch/workshop/pdb/1ERT
+# check_structure commands
+cd ~/workshop/pdb/1ERT
 check_structure -i 1ERT.pdb checkall
 check_structure -i 1ERT.pdb -o output.pdb altloc --select A20:A,A43:B,A90:B 
 ~~~

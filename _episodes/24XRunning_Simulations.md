@@ -1,4 +1,4 @@
----
+
 title: "Running Simulations"
 teaching: 30
 exercises: 5
@@ -64,7 +64,7 @@ Before simulating a system we need to relax it. Any atomic clashes must be resol
 
 Let's check our model for clashes. 
 ~~~
-cd ~/scratch/workshop/pdb/6N4O/simulation/setup/
+cd ~/workshop/pdb/6N4O/simulation/setup/
 source ~/env-biobb/bin/activate
 check_structure -i inpcrd_noWAT.pdb checkall
 ~~~
@@ -169,8 +169,8 @@ salloc --time=2:0:0 --mem-per-cpu=2000 --ntasks=8
 {: .language-bash}
 Load AMBER module and run minimization
 ~~~
-module load StdEnv/2020 gcc ambertools
-source $EBROOTAMBERTOOLS/amber.sh 
+module purge
+module load gcc/9.3.0 cuda/11.4 ambertools/22 
 mpiexec sander.MPI -O -i min_1.in -p prmtop.parm7 -c inpcrd.rst7 -ref inpcrd.rst7 -r minimized_1.nc -o mdout_1&
 ~~~
 {: .language-bash}
@@ -526,8 +526,8 @@ We converted NAMD restart files to AMBER restart and we can continue simulation 
 
 Submitting pmemd.cuda on Siku:
 ~~~
-#SBATCH --mem-per-cpu=4000 --time=3:0:0 --gres=gpu:v100:1 --partition=all_gpus
-ml StdEnv/2020 gcc/8.4.0 cuda/10.2 openmpi/4.0.3 amber
+#SBATCH --mem-per-cpu=4000 --time=3:0:0 --gres=gpu:v100:1 
+module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15
 
 pmemd.cuda -O -i pmemd_prod.in -o production.log -p ../../prmtop.parm7 -c restart.rst7
 ~~~
@@ -544,8 +544,8 @@ To transfer simulation to GROMACS in addition to converting restart file we need
 
 First convert AMBER topology to GROMACS
 ~~~
-module load StdEnv/2020 gcc ambertools
-source $EBROOTAMBERTOOLS/amber.sh
+module purge
+ml StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 ambertools/22
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_gromacs/0-setup
 python
 ~~~

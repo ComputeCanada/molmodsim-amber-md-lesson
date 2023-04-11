@@ -65,9 +65,9 @@ Let's change ASP20 and ASP26 in the "protein.pdb" file created previously from t
 ### Selecting protonation states with the *AMBER LEaP* module.
 
 ~~~
-cd  ~/scratch/workshop/pdb/1ERT
-ml ambertools
-tleap -f leaprc.protein.ff14SB
+cd  ~/workshop/pdb/1ERT
+ml StdEnv/2020 gcc/9.3.0 cuda/11.4 ambertools/22
+tleap -f leaprc.protein.ff19SB
 ~~~
 {: .language-bash}
 
@@ -79,10 +79,12 @@ quit
 ~~~
 {: .leap}
 
+You can verify that residues are changed by grepping ASH.
+
 ### Selecting protonation states with *VMD*.
 
 ~~~
-ml vmd
+ml StdEnv/2020 vmd
 vmd
 ~~~
 {: .language-bash}
@@ -119,7 +121,7 @@ The use of constant protonation states in molecular dynamics simulations has its
 >
 >>## Solution
 >>~~~
->> cd ~/scratch/workshop/pdb/1RGG
+>> cd ~/workshop/pdb/1RGG
 >>~~~
 >>{: .language-bash}
 >> Save the following commands in a file,  e.g. prep_1RGG.vmd
@@ -131,7 +133,8 @@ The use of constant protonation states in molecular dynamics simulations has its
 >>$s writepdb 1RGG_chain_A.pdb
 >># Delete the top molecule
 >>mol delete top
->># Load chain A into a new molecule
+>># Load chain A into a new molecule 
+>># Loading only one chain will simplify selections commands 
 >>mol new 1RGG_chain_A.pdb
 >># Protonate ASP79
 >>set s [atomselect top "resid 79"]

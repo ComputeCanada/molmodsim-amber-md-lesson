@@ -1,5 +1,5 @@
 ---
-title: "Preparing more complex nucleic acid-protein system"
+title: "Preparing a Complex RNA-protein System"
 teaching: 30
 exercises: 5
 questions:
@@ -528,8 +528,8 @@ The most straightforward fix is to rename O5' atom to P. if you chose to do this
 First, rename the phosphorylated 5' terminal nucleotide C according to AMBER convention to C5. The names of phosphorylated terminals in AMBER are A5, C5, G5, U5, DA5, DC5, DG5, and DT5. The libraries of phosphorylated 5' terminal nucleotides are in the file '$AMBERHOME/dat/leap/lib/terminal_monophosphate.lib'.
 
 ~~~
-module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 ambertools/20
-source $EBROOTAMBERTOOLS/amber.sh
+module purge
+module load gcc/9.3.0 cuda/11.4  ambertools/22
 ~~~
 {: .language-bash}
 
@@ -668,8 +668,8 @@ cp ~/scratch/workshop/pdb/6N4O/RNA_models/simRNA/chains_CD_minimized.pdb .
 
 Launch Leap and load protein and RNA forcefields:
 ~~~
-module --force purge
-module load StdEnv/2020  gcc ambertools
+module purge
+module load gcc/9.3.0 cuda/11.4  ambertools/22
 source $EBROOTAMBERTOOLS/amber.sh
 tleap -f leaprc.RNA.OL3 -f leaprc.protein.ff14SB -f leaprc.water.tip3p -I $EBROOTAMBERTOOLS/dat/leap/lib/
 ~~~
@@ -711,8 +711,8 @@ Using this information (MW 110 KDa, charge -6.0, 75000 water molecules) as an in
 >>For processing with H++ server we need to merge models of protein, nucleic acids and MG ions into one PDB file. As H++ server does not have library entries for phosphorylated 5' terminals remove all 5' phosphate atoms.
 >>
 >>~~~
->>module load StdEnv/2020 gcc ambertools
->>source $EBROOTAMBERTOOLS/amber.sh
+>>module purge
+>>module load gcc/9.3.0 cuda/11.4  ambertools/22
 >>mkdir -p ~/scratch/workshop/pdb/6N4O/simulation/setup/Hpp
 >>cd ~/scratch/workshop/pdb/6N4O/simulation/setup/Hpp
 >>tleap -I $EBROOTAMBERTOOLS/dat/leap/lib/
@@ -768,8 +768,8 @@ Finally, we have all pieces, and are ready to prepare the complete simulation sy
 5.  We need to protonate HIS 77, 766, 822, and 829
 
 ~~~
-module load StdEnv/2020  gcc ambertools
-source $EBROOTAMBERTOOLS/amber.sh
+module purge
+module load gcc/9.3.0 cuda/11.4  ambertools/22
 cd ~/scratch/workshop/pdb/6N4O/simulation/setup
 tleap -I $EBROOTAMBERTOOLS/dat/leap/lib/ 
 ~~~
@@ -820,9 +820,8 @@ The force field modification frcmod.phos_nucleic14SB is needed for simulation st
 >>~~~
 >>#!/bin/bash
 >># FILE <<< prep_system.sh >>>
->>module --force purge
->>module load StdEnv/2020 gcc ambertools
->>source $EBROOTAMBERTOOLS/amber.sh
+>>module purge
+>>module load gcc/9.3.0 cuda/11.4  ambertools/22
 >>
 >>inputData=$(cat << EOF
 >>loadamberparams frcmod.phos_nucleic14SB

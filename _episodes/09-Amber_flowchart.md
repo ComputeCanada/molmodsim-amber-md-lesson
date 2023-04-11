@@ -1,5 +1,5 @@
 ---
-title: "Information flow and files needed to run an MD simulation with AMBER"
+title: "An Overview of Information Flow in AMBER"
 teaching: 30
 exercises: 5
 questions:
@@ -10,7 +10,7 @@ keypoints:
 - "To run an MD simulation with AMBER 3 files are needed: an input file, a parameter file, and a file describing coordinates/velocities . "
 ---
 ### Introduction
-In this lesson we will go through the steps of setting up a fully solvated protein system for simulation with AMBER/NAMD. There are many commercial programs and interactive graphical interfaces designed to assist with system preparation. While these tools are easy to use and don't require as much learning efforts as command line tools, they are offer only a limited functionality, and most importantly results obtained with WEB/GUI tools are not reproducible and prone to human error. Therefore, we will focus on system preparation using only scriptable command line driven tools. The emphasis of this lesson is to expose you to the various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One of the advantages of such approach is that once a workflow script have been developed it can be easily modified for other systems or conditions (for example if an updated version of pdb file is released, you can prepare a new simulation system with a single click).
+In this lesson we will go through the steps of setting up a fully solvated protein system for simulation with AMBER/NAMD/OPENMM. There are many commercial programs and interactive graphical interfaces designed to assist with system preparation. While these tools are easy to use and don't require as much learning efforts as command line tools, they are offer only a limited functionality, and most importantly results obtained with WEB/GUI tools are not reproducible and prone to human error. When a user needs to generate multiple systems with different proteins or membrane compositions or requires different starting configurations, relying on GUI/WEB interface becomes a challenge, as the process becomes time-consuming. Therefore, we will focus on system preparation using only scriptable command line driven tools. The emphasis of this lesson is to expose you to the various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One of the advantages of such approach is that once a workflow script have been developed it can be easily modified for other systems or conditions (for example if an updated version of pdb file is released, you can prepare a new simulation system with a single click).
 
 ### Information flow in AMBER
 Simulation workflow in MD usually involves three steps: system preparation, simulation, and analysis. Let's take a closer look at these steps.
