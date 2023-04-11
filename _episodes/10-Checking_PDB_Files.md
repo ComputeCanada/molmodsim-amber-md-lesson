@@ -13,11 +13,21 @@ keypoints:
 - "Small errors in the input structure may cause MD simulations to became unstable or give unrealistic results."
 ---
 
+{: .instructor_notes} 
 Many commercial programs and interactive graphical interfaces such as CHARMM-GUI are available to help prepare the system. These tools are easy to use and do not require as much learning effort as command-line tools, however, the functionality is limited, and results obtained with WEB/GUI tools are not reproducible and prone to human error.  Therefore, we will focus on preparing the system using only scriptable command-line-driven tools. This lesson is intended to expose you to various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One benefit of this approach is that once a workflow script has been developed, it can be easily adapted to other systems or conditions (for example, if a new pdb file is released, you can prepare a new simulation system with one click).
+{: .instructor_notes} 
 
+{: .instructor_notes} 
 Before we can successfully import a PDB file into LEAP and produce the system topology file, we need to ensure that the original files are free from errors and the molecules we want to simulate are chemically correct.
+{: .instructor_notes} 
+
 
 ## Important Things to Check in a PDB File
+
+{: .self_study_text} 
+- we need to ensure that the original files are free from errors and the molecules we want to simulate are chemically correct.
+{: .self_study_text} 
+
 Small errors in the input structure may cause MD simulations to become unstable or give unrealistic results. The most common problems in PDB files include:
 
 - non-protein molecules (crystallographic waters, ligands, modified amino acids, etc.)
@@ -29,7 +39,9 @@ Small errors in the input structure may cause MD simulations to become unstable 
 - di-sulfide bonds
 - wrong assignment of the N and O atoms in the amide groups of ASN and GLN, and the N and C atoms in the imidazole ring of HIS
 
+{: .instructor_notes} 
 Several problems can be identified and corrected automatically (such as missing atoms and some steric clashes), while others may have more than one solution  and require your decision. In this section, you will learn how to recognize and correct problems associated with multiple chains, alternate conformations, non-protein molecules, and disulphide bonds.
+{: .instructor_notes} 
 
 #### Downloading a Protein Structure File from PDB
 Let's start with downloading a protein structure file:
@@ -40,11 +52,25 @@ wget http://files.rcsb.org/view/1ERT.pdb
 {: .language-bash}
 
 #### Checking PDB Files for Presence of Non-Protein Molecules
+
+{: .instructor_notes} 
 PDB files are essentially text files containing important structural information, as well as information about crystallographic experiments, secondary structures, and residues that are missing. To set up an MD simulation system, we will only need the coordinate section, which includes ATOM, TER, and HETATM records. 
+{: .instructor_notes} 
 
-The lines beginning with "ATOM" represent the atomic coordinates for standard amino acids and nucleotides. "TER" records indicate which atoms are at the terminal of a protein chain. For chemical compounds other than proteins or nucleic acids, the "HETATM" record type is used. Record types of both types use a simple fixed-column format explained [here](https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM). 
+{: .instructor_notes} 
+The lines beginning with "ATOM" represent the atomic coordinates for standard amino acids and nucleotides. "TER" records indicate which atoms are at the terminal of a protein chain. For chemical compounds other than proteins or nucleic acids, the "HETATM" record type is used. Records of both types use a simple fixed-column format explained [here](https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM). 
+{: .instructor_notes} 
 
+{: .self_study_text} 
+- The lines beginning with "ATOM" represent the atomic coordinates for standard amino acids and nucleotides.
+- For chemical compounds other than proteins or nucleic acids, the "HETATM" record type is used.
+- Records of both types use a simple fixed-column format explained [here](https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM). 
+- "TER" records indicate which atoms are at the terminal of a protein chain.
+{: .self_study_text} 
+
+{: .instructor_notes} 
 A PDB file containing any molecules other than proteins or nucleic acids needs special treatment. It is common for PDB files to contain solvents, ions, lipid molecules, protein co-factors, e.t.c. In some cases, these extra components are necessary for the protein function and should be included in the simulation. It is common to add compounds to facilitate crystallization. These compounds are usually not necessary for simulation. In this introductory lesson, we won't consider them.
+{: .instructor_notes} 
 
 Let's select only protein atoms and save them in a new file called "protein.pdb". We will be using [VMD](https://www.ks.uiuc.edu/Research/vmd/) for this.
 
@@ -138,9 +164,18 @@ Sometimes you may want to compare simulations starting from different initial co
 {:.challenge}
 
 #### Checking PDB Files for cross-linked cysteines.
+
+{: .instructor_notes} 
 Disulfide bonds are covalent bonds between the sulfur atoms of two cysteine residues. They are very important for the stabilization of protein structure.
 Disulfide bonds are easy to spot in PDB files with any visualization program. For example, [MDWeb](http://mmb.irbbarcelona.org/MDWeb2)server can identify disulfide bonds and many other problems in PDB files. GROMACS `pdb2gmx` utility can automatically add S-S bonds to the topology based on the distance between sulfur atoms (option *-ss*).  
 For simulation preparation with the AMBER `tleap` program, cross-linked cysteines must be renamed from "CYS" to "CYX" to distinguish them from normal cysteines. Then the bond between them must be made manually using the `bond` command.
+{: .instructor_notes} 
+
+{: .self_study_text} 
+- [MDWeb](http://mmb.irbbarcelona.org/MDWeb2)server can identify disulfide bonds and many other problems in PDB files. 
+- GROMACS `pdb2gmx` utility can automatically add S-S bonds to the topology based on the distance between sulfur atoms (option *-ss*).
+- For simulation preparation with the AMBER, cross-linked cysteines must be renamed from "CYS" to "CYX" 
+{: .self_study_text} 
 
 #### Check_structure utility from BioExcel building blocks project
 [Check_structure](https://pypi.org/project/biobb-structure-checking/) is a command-line utility from [BioBB project](https://github.com/bioexcel/biobb) for exhaustive structure quality checking (residue chirality, amide orientation, vdw clashes, etc.).  Using this utility, you can perform manipulations with structures, such as selecting chains or conformations, removing components, mutating residues, adding missing atoms, adding hydrogens, etc.  
