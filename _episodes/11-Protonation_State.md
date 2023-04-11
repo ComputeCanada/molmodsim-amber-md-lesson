@@ -15,12 +15,30 @@ keypoints:
 - "Conformational changes in proteins may be accompanied by changes in protonation pattern."
 ---
 ### Simulations need to consider protonation states of amino acids
-Setting up a simulation system requires assigning protonation states and, possibly, tautomers to the HIS residues. The protonation states of titratable amino acids (Arg, Lys, Tyr, Cys, His, Glu, Asp) depend on the local micro-environment and pH. A highly polar microenvironment will stabilize the charged form, while a less polar microenvironment will favor the neutral form. At physiological pH, TYR, LYS, CYS, and ARG are almost always in their standard protonation states, while GLU, ASP, and HIS can be in non-standard forms.
 
+{: .instructor_notes} 
+Setting up a simulation system requires assigning protonation states and, possibly, tautomers to the HIS residues. The protonation states of titratable amino acids (Arg, Lys, Tyr, Cys, His, Glu, Asp) depend on the local micro-environment and pH. A highly polar microenvironment will stabilize the charged form, while a less polar microenvironment will favor the neutral form. At physiological pH, TYR, LYS, CYS, and ARG are almost always in their standard protonation states, while GLU, ASP, and HIS can be in non-standard forms.
+{: .instructor_notes} 
+
+{: .instructor_notes} 
 The protonation pattern of proteins is crucial for their catalytic function and structural stability. For a classic MD simulation, protonation states must be determined and assigned before the simulation can begin. For realistic MD simulations, it is essential to assign the right protonation states. The wrong protonation states can have dramatic effects and invalidate the results. Numerous MD simulation studies have demonstrated the importance of protein protonation states [[1](http://doi.org/10.1529/biophysj.105.059329), [2](http://doi.org/10.7554/eLife.16616), [3](https://doi.org/10.1016/j.cplett.2018.12.039), [4](https://doi.org/10.1021/jacs.9b06064), [5](https://doi.org/10.1016/j.dib.2016.07.040)].
+{: .instructor_notes} 
+
+{: .self_study_text} 
+- The protonation pattern of proteins is crucial for their catalytic function and structural stability. 
+-  Numerous MD simulation studies have demonstrated the importance of protein protonation states [[1](http://doi.org/10.1529/biophysj.105.059329), [2](http://doi.org/10.7554/eLife.16616), [3](https://doi.org/10.1016/j.cplett.2018.12.039), [4](https://doi.org/10.1021/jacs.9b06064), [5](https://doi.org/10.1016/j.dib.2016.07.040)].
+{: .self_study_text} 
+
 
 ### How to Determine Protonation States of Residues in a Protein?
+
+{: .instructor_notes} 
 For predicting the pKa values of protein residues, several web servers and standalone programs are available. The underlying methods used by all of them fall into two broad categories: empirical (such as propka) and Poisson-Boltzmann methods. The disadvantage of the empirical method is that it works well only for proteins similar to those in the training set. It is not guaranteed to work well for all proteins. Programs implementing Poisson-Boltzmann continuum electrostatics have a solid physical basis. Most of them, however, only sample a single protein conformation, which is the primary source of inaccuracy. One exception is MCCE, which samples sidechain rotamers, giving a more precise picture of coupled ionization and position changes. MCCE also has limitations because it does not sample backbone conformations. The most rigorous method is constant pH simulations in which the ionization states are dynamically adjusted in MD simulations. It is a computationally expensive method, but a very efficient GPU implementation of constant pH molecular dynamics has recently been developed and [implemented in AMBER](https://pubs.acs.org/doi/10.1021/acs.jcim.9b00754).
+{: .instructor_notes} 
+
+{: .self_study_text} 
+For predicting the pKa values of protein residues, several web servers and standalone programs are available.
+{: .self_study_text} 
 
 [*H++*](http://newbiophysics.cs.vt.edu/H++/) server. *H++* calculations are based on the classical continuum electrostatic model (a continuous medium where solvent molecules are replaced with the average properties of the solvent). The *H++* program uses AmberTools modules to preprocess a PDB file, and it is able to generate basic topology and coordinate files for MD simulations in AMBER format. *H++* is a single-configuration method, and it automatically selects the "A" conformation without any user intervention. Details of the methodology can be found in the [reference](https://doi.org/10.1093/nar/gks375).
 
@@ -58,6 +76,7 @@ Protonation states can be assigned using the *GROMACS pdb2gmx* program. By defau
 
 The downside of this method is that it can not be scripted. The manual selection is cumbersome because *pdb2gmx* will be prompting to select the protonation state for each of the residues in a PDB file. Besides, *pdb2gmx* changes residue names only in the output topology file. Residue names are left unchanged in the output .pdb and .gro files.  
 
+### Assigning protonation states in structure files
 A more consistent and convenient way to select the desired form of amino acid is to change its name in the structure file before generating a topology. The neutral states of LYS, ASP, and GLU can be chosen by renaming them  LYN, ASH, and GLH, respectively.  You can select the appropriate form of HIS by renaming HIS to HIE (proton on NE2), HID (proton on ND1), or HIP (both protons).
 
 Let's change ASP20 and ASP26 in the "protein.pdb" file created previously from the "1ERT.pdb" to the neutral form ASH.  We can either the *leap* module from the *AmberTools* or *VMD*.
@@ -101,7 +120,15 @@ quit
 
 
 ### Limitations of Fixed Protonation State Simulations
+
+{: .instructor_notes} 
 The use of constant protonation states in molecular dynamics simulations has its disadvantages. When conformational changes occur in natural systems, protonation patterns often change as well. In molecular dynamics simulations with fixed states, these processes are not coupled, making it difficult to fully understand proton-coupled conformational dynamics. Consider using constant pH simulations if proton-coupled dynamics are essential to your research. MD with constant pH is currently implemented in both AMBER and NAMD. At the moment, it is not officially implemented in *GROMACS*, but a modified version is available [[6](https://pubs.acs.org/doi/10.1021/ct200061r)].
+{: .instructor_notes} 
+
+{: .self_study_text} 
+- Difficult to understand proton-coupled conformational dynamics.
+- Consider using constant pH simulations if proton-coupled dynamics are essential to your research.
+{: .self_study_text} 
 
 #### References
 

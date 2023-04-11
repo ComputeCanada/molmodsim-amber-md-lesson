@@ -9,6 +9,9 @@ objectives:
 keypoints:
 - "To run an MD simulation with AMBER 3 files are needed: an input file, a parameter file, and a file describing coordinates/velocities . "
 ---
+
+https://github.com/ComputeCanada/molmodsim-amber-md-lesson/releases/download/workshop-2021-04/workshop_2023a.tar.gz
+
 ### Introduction
 In this lesson we will go through the steps of setting up a fully solvated protein system for simulation with AMBER/NAMD/OPENMM. There are many commercial programs and interactive graphical interfaces designed to assist with system preparation. While these tools are easy to use and don't require as much learning efforts as command line tools, they are offer only a limited functionality, and most importantly results obtained with WEB/GUI tools are not reproducible and prone to human error. When a user needs to generate multiple systems with different proteins or membrane compositions or requires different starting configurations, relying on GUI/WEB interface becomes a challenge, as the process becomes time-consuming. Therefore, we will focus on system preparation using only scriptable command line driven tools. The emphasis of this lesson is to expose you to the various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One of the advantages of such approach is that once a workflow script have been developed it can be easily modified for other systems or conditions (for example if an updated version of pdb file is released, you can prepare a new simulation system with a single click).
 

@@ -156,7 +156,8 @@ Usage
 module load StdEnv/2020 python/3.10
 source ~/env-biobb/bin/activate
 
-# check_structure commands
+# get help on commands:
+check_structure commands 
 cd ~/workshop/pdb/1ERT
 check_structure -i 1ERT.pdb checkall
 check_structure -i 1ERT.pdb -o output.pdb altloc --select A20:A,A43:B,A90:B 

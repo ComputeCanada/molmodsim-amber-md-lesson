@@ -17,20 +17,42 @@ keypoints:
 ### AMBER MD engines.
 Amber package includes two MD engines: SANDER and PMEMD. Both programs are available in serial and parallel versions. 
 
-#### SANDER
-SANDER is a free simulation engine distributed with the AmberTools package. For parallel distributed simulations, it uses the MPI (message passing interface). The parallel version of Sander implements replicated data structure. Each CPU computes a portion of the potential energy and corresponding gradients for a set of atoms assigned to it.  A global part of the code then sums the force vector and sends the result to each CPU. The processors then perform a molecular dynamics update step for the assigned atoms and communicate the updated positions to all CPUs in preparation for the subsequent molecular dynamics step.
 
+#### SANDER
+
+{: .instructor_notes} 
+SANDER is a free simulation engine distributed with the AmberTools package. For parallel distributed simulations, it uses the MPI (message passing interface). The parallel version of Sander implements replicated data structure. Each CPU computes a portion of the potential energy and corresponding gradients for a set of atoms assigned to it.  A global part of the code then sums the force vector and sends the result to each CPU. The processors then perform a molecular dynamics update step for the assigned atoms and communicate the updated positions to all CPUs in preparation for the subsequent molecular dynamics step.
+{: .instructor_notes} 
+
+{: .instructor_notes} 
 This model provides a convenient programming environment, but the main problem is that the communication required at each step grows with the number of processors limiting parallel scaling. 
+{: .instructor_notes} 
+
+{: .self_study_text} 
+- SANDER is a free simulation engine distributed with the AmberTools package.
+{: .self_study_text} 
+
 
 #### PMEMD
+
+{: .instructor_notes} 
 PMEMD is an extensively revised version of SANDER available only in the commercial AMBER package. Developers made many optimizations to improve both single-processor performance and parallel scaling. To avoid data transfer bottleneck, PMEMD communicates to each processor only the coordinate information necessary for computing the pieces of the potential energy assigned to it. This code, however, does not support all of the options found in the SANDER.  
+{: .instructor_notes} 
+
+{: .self_study_text} 
+- PMEMD is an extensively revised version of SANDER available only in the commercial AMBER package.
+{: .self_study_text} 
+
 
 #### GPU-Accelerated PMEMD
 GPU - accelerated PMEMD version of PMEMD (pmemd.cuda) leverages NVIDIA GPUs to perform MD simulations.  It is significantly faster than the CPU version achieving high simulation speed by executing all calculations on a single GPU within its memory. This approach eliminates the bottleneck of moving data between CPU and GPU and allows very efficient GPU usage.  
 
 **<font color="red">Modern GPUs are so fast that communication overhead between GPUs does not allow for efficient parallel scaling of an MD simulation to two or more GPUs.</font>**
 
+{: .instructor_notes} 
 While you can run a single simulation on several GPUs using the parallel PMEMD GPU version (pmemd.cuda.MPI) it will run not run much faster than on a single GPU. Parallel GPU version is useful only for specific simulations such as thermodynamic integration and replica-exchange MD. These types of jobs involve several completely independent simulations that can be executed concurrently on different GPUs. PMEMD allows running multiple copies of simulations within a single parallel run via the multi-pmemd mechanism described below. 
+{: .instructor_notes} 
+
 
 [PMEMD parallel scaling, A100](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=PMEMD.cuda.MPI&software_id=&module_contains=&module_version=&site_contains=Narval&gpu_model=&cpu_model=&arch=&dataset=6n4o)  
 [PMEMD parallel scaling, P100](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=PMEMD.cuda.MPI&software_id=&module_contains=&module_version=&site_contains=Cedar&gpu_model=P100-PCIE&cpu_model=&arch=&dataset=6n4o)
@@ -57,9 +79,15 @@ Multi-sander and multi-pmemd are wrappers around parallel versions of these prog
 ### Energy minimization.
 Before simulating a system we need to relax it. Any atomic clashes must be resolved, and potential energy minimized to avoid unphysically large forces that can crash a simulation. 
 
+{: .instructor_notes} 
 The general minimization strategy is first to restrict all solute atoms with the experimental coordinates and relax all atoms that were added. (solvent, ions and missing fragments). This will help to stabilize the native conformation. There are no strict rules defining how many minimization steps are necessary. The choice will depend on the composition of a simulation system. For a big systems with a large amount of missing residues it is safer to carry out several minimization steps gradually releasing restraints. For example, you can first relax only solvent and ions, then lipid bilayer (if this is a membrane protein), then added fragments, then the original protein side-chains. Having more steps may be unnecessary, but it will not cause any problems. 
+{: .instructor_notes} 
 
-We could do a two a two stage minimization. In the first stage we restrain all original atoms. In the second stage we restrain only the original backbone atoms. Our example protein is very small and we have limited time, so we skip the first step and restrain only protein backbone.
+{: .self_study_text} 
+- it is safer to carry out several minimization steps gradually releasing restraints.
+{: .self_study_text} 
+
+For example, we could do a two stage minimization. In the first stage we restrain all original atoms. In the second stage we restrain only the original backbone atoms. Our example protein is very small and we have limited time, so we skip the first step and restrain only protein backbone.
 
 ~~~
 cd ~/workshop/pdb/1RGG/AMBER/1_minimization
@@ -318,10 +346,9 @@ bash extract_energies.sh equilibration_2.log
 
 #### Plot energy components with python
 
-Get interactive allocation and start vncserver
-Connect VNC to the node running vncserver.
+Get interactive allocation and start vncserver. Connect VNC viewer to the node running vncserver.
 
-On the node load the python module:
+On the compute node load python and scipy-stack modules:
 ~~~
 cd ~/workshop/pdb/1RGG/AMBER/3_equilibration
 ml StdEnv/2020 python scipy-stack
@@ -329,14 +356,14 @@ python
 ~~~
 {: .language-bash}
 
-Read table from the file *energies.dat* into pandas dataframe and plot it:
+Read table from the file `energies.dat` into pandas dataframe and plot it:
 
 ~~~
 python ~/bin/plot_energies.py
 ~~~
 {: .language-bash}
 
-*plot_energies.py*:
+File `plot_energies.py`:
 
 ~~~
 import pandas as pd
@@ -372,8 +399,11 @@ EOF
 {: .language-bash}
 
 ## Transferring equilibrated system between simulation packages.
-Simulation packages have different methods and performance. It is useful to be able to transfer a running simulation from one software to another. Imagine that you started your project with GROMACS, but later realized that you need to run a constant pH simulation. You need to switch to AMBER. Want to study conformational transitions? Gaussian accelerated MD is not available in GROMACS. Another reason to move to AMBER/NAMD. 
-Want to apply custom forces - move to NAMD.
+Simulation packages have different methods and performance. It is useful to be able to transfer a running simulation from one software to another. 
+
+{: .instructor_notes} 
+Imagine that you started your project with GROMACS, but later realized that you need to run a constant pH simulation. You need to switch to AMBER. Want to study conformational transitions? Gaussian accelerated MD is not available in GROMACS. Another reason to move to AMBER/NAMD. Want to apply custom forces? It is easy to with Tcl scripting in NAMD.
+{: .instructor_notes} 
 
 ### Moving simulation from AMBER to GROMACS.
 To transfer simulation to GROMACS we need to convert topology and restart files.

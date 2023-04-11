@@ -19,9 +19,9 @@ keypoints:
 ---
 ### Why ions are added to simulations?
 
-- When periodic boundary conditions are applied and grid-based methods are used to compute the Coulomb energy, the simulation box interacts with the infinite number of its periodic images. As a result, if a simulation system is charged, the electrostatic energy will essentially add to infinity. To solve this issue, we need to add counter-ions to neutralize the system so that the electrostatic energy can be correctly calculated during simulation.
+When periodic boundary conditions are applied and grid-based methods are used to compute the Coulomb energy, the simulation box interacts with the infinite number of its periodic images. As a result, if a simulation system is charged, the electrostatic energy will essentially add to infinity. To solve this issue, we need to add counter-ions to neutralize the system so that the electrostatic energy can be correctly calculated during simulation.
 
-- The conformations, dynamics, and functions of biological macromolecules are influenced by ion concentration and composition of the local environment.
+Another reason is that the conformations, dynamics, and functions of biological macromolecules are influenced by ion concentration and composition of the local environment.
 
 ## Neutralizing a system
 
@@ -32,7 +32,15 @@ Fist we will add enough counter-ions to neutralize the system. Ions can be added
 Adding more ions to a neutralized system will be necessary to represent physiological salt concentrations.
 
 ### Caveats and limitations of the random ion placement
+
+{: .instructor_notes} 
 Random placement of ions will generate a system in the completely dissociated, energetically unfavorable state. The random placement of ions is problematic if the electric charge of the macromolecule is big (for example DNA) because ions tend to form screening clouds around charged molecules rather than being distributed randomly. Random placement of ions will negatively impact the time required for the system equilibration and may affect structural stability of a macromolecule. A better approach is to place ions according to the electrostatic potential of the macromolecule. Such method is implemented in the *leap* module of the *AmberTools*. The *addions* command adds ions to simulation cells near the minima of the solute's electrostatic potential field.
+{: .instructor_notes} 
+
+{: .self_study_text} 
+- Random placement of ions will require longer equilibration and may affect structural stability of a macromolecule.
+- A better approach is to place ions according to the electrostatic potential of the macromolecule. 
+{: .self_study_text} 
 
 Let's neutralize 1RGG protein using the *leap* module. We will add ions prior to solvation so that the potential from un-equilibrated water will not interfere with ion placement:
 
@@ -57,11 +65,22 @@ To mimic the macroscopic salt concentration in the environment being studied we 
 
 $N_{Ions}=0.0187\cdot[Molarity]\cdot{N_{WaterMol}}$
 
+
+{: .instructor_notes} 
 The drawback of this calculation is that it does not take into account the charge of a macromolecule. As charged solute perturbs the local solvent environment by depleting ions from the bulk this method generates a system with the salt concentration that is too high. For more accurate salt concentration you can calculate the number of ions corrected for screening effects using the [*SLTCAP*](https://www.phys.ksu.edu/personal/schmit/SLTCAP/SLTCAP.html) server.
 
 As you can see from the equation above, to calculate the number of ions we need to know the number of water molecules in the simulation system. So we continue our *leap* session and solvate the simulation system. In this lesson we will create a simple cubic solvent box. As we discussed in the episode "Periodic Boundary Conditions", a properly solvated simulation system should have at least 10 <span>&#8491;</span> distance between the solute and the edge of the periodic box after equilibration. Standard practice is to tile a pre-equilibrated solvent box across the system and eliminate solvent molecules which clash with the solute.
+{: .instructor_notes} 
 
+{: .self_study_text} 
+- This calculation does not take into account the charge of a macromolecule.
+- For more accurate salt concentration you can calculate the number of ions corrected for screening effects using the [*SLTCAP*](https://www.phys.ksu.edu/personal/schmit/SLTCAP/SLTCAP.html) server.
+- To calculate the number of ions we need to know the number of water molecules in the simulation system.
+{: .self_study_text} 
+
+{: .instructor_notes} 
 When water is added to the system in this way, some VDW voids at the macromolecule and the box interfaces are inevitable because packing is not perfect. In the process of equilibration the water molecules will move to fill the voids and minimize the interaction energy. The box will shrink and the distance between the solute and the edge of the periodic box will become smaller. To compensate for this box shrinkage we need to start with a larger box size than the desired. The rule of thumb is that you need to add at least 2.5 <span>&#8491;</span> to the box size.
+{: .instructor_notes} 
 
 We will use the *solvateBox* command to create the periodic solvent box around the macromolecule. The *solvateBox* command has many options. Let's create a cuboid water box around the 1RGG protein. We will use the pre-equilibrated box of SPCE water (SPCBOX), set the minimum distance between the solute and the edge of the box to 15 <span>&#8491;</span>, and request an isometric (cubic) box:
 ~~~
@@ -141,7 +160,15 @@ tleap -f solvate_1RRG.leap
 
 
 ### Automation and Reproducibility of a Simulation Setup
+
+{: .instructor_notes} 
 The process of molecular dynamics system setup can be automated by saving the whole sequence of commands into a text file. This file (shell script) can be easily modified to prepare simulation systems from other PDB structure files or used to reproduce your simulation setup. All system preparation steps can be completed in seconds with the script.
+{: .instructor_notes} 
+
+{: .self_study_text} 
+- The process of molecular dynamics system setup can be automated by saving the whole sequence of commands into a text file.
+{: .self_study_text} 
+
 
 You can download an example shell script that performs all preparation steps [here]({{ page.root }}/code/run_setup.sh). The script downloads the molecular structure file from PDB and generates input files for simulation with AMBER, NAMD, and GROMACS.
 
