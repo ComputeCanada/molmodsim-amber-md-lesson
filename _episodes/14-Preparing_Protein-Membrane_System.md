@@ -53,6 +53,7 @@ packmol-memgen \
 
 Another example:
 ~~~
+#!/bin/bash
 #SBATCH -c1 --mem-per-cpu=4000 --time=3:0:0
 
 module purge
