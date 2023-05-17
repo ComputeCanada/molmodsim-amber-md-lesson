@@ -21,7 +21,7 @@ Amber currently includes Lipid21 as its main membrane force field.  In this modu
 Known Issues: 
 Using MC barostat with hard LJ cutoff is known to cause bilayer deformation. It is recommended to use an LJ force switch when running simulations with the MC barostat.[Gomez, 2021](https://onlinelibrary.wiley.com/doi/abs/10.1002/jcc.26798)
 
-### Creating a membrane-only simulation system
+### Creating simulation systems with packmol-memgen
 - What lipids are available?
 
 ~~~
@@ -45,6 +45,48 @@ packmol-memgen \
     --ratio 3:1 \
     --distxy_fix 100 \
     --parametrize
+~~~
+{: .language-bash}
+
+- if the option --parametrize is given the solvated system is bilayer_only_lipid.pdb
+- without --parametrize the solvated system is  bilayer_only.pdb
+
+Another example:
+~~~
+#SBATCH -c1 --mem-per-cpu=4000 --time=3:0:0
+
+module purge
+module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 ambertools/22
+rm -f bilayer* *.log slurm*
+packmol-memgen \
+    --lipids CHL1:POPC:POPE:PSM \
+    --salt --salt_c Na+ --saltcon 0.15 \
+    --dist_wat 15 \
+    --ratio 4:2:1:1 \
+    --distxy_fix 100 \
+    --parametrize
+~~~
+{: .language-bash}
+
+This generates bilayer_only_lipids.pdb which can be used to create topology files with AMBER force fields not available in packmol-memgen. Example using OPC3-Pol polarizable water:
+
+~~~
+leap_input=$(cat << EOF
+source leaprc.water.opc3pol
+source leaprc.lipid21 
+sys=loadpdb bilayer_only_lipid.pdb
+set sys box {111.3 111.3 81.5}
+saveamberparm sys bilayer.parm7 bilayer.rst7
+quit
+EOF)
+tleap -f <(echo "$leap_input")
+~~~
+{: .language-bash}
+
+Box size can be extracted from the file bilayer_only_lipid.top:
+
+~~~
+grep -A2 BOX bilayer_only_lipid.top
 ~~~
 {: .language-bash}
 
@@ -129,4 +171,5 @@ Of course point charges are not very accurate because they are derived using sem
 
 ### Links to advanced AMBER tutorials
 - [Placing waters and ions using 3D-RISM and MOFT](http://ambermd.org/tutorials/advanced/tutorial34/index.html)
+- [Building and Equilibrating a Membrane System with PACKMOL-Memgen](https://ambermd.org/tutorials/advanced/tutorial38/index.php#Lipid_System)
 - [Setup and simulation of a membrane protein with AMBER Lipid21 and PACKMOL-Memgen](https://github.com/callumjd/AMBER-Membrane_protein_tutorial). 
