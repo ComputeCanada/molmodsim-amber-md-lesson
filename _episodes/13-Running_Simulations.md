@@ -482,4 +482,5 @@ amber.save("restart.gro")
 gmx trjconv -f restart.gro -o restart.trr
 gmx grompp -p topol.top  -c restart.gro -t restart.trr -f gromacs_production.mdp
 ~~~
+- Tested with gromacs/2021 and gromacs/2022.- This procedure does not work with gromacs/2023. 
 {: .language-bash}
