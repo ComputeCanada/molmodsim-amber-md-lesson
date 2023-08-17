@@ -51,19 +51,20 @@ packmol-memgen \
 - if the option --parametrize is given the solvated system is bilayer_only_lipid.pdb
 - without --parametrize the solvated system is  bilayer_only.pdb
 
-Another example:
+Another more comlex example with leaflets of different composition:
 ~~~
 #!/bin/bash
-#SBATCH -c1 --mem-per-cpu=4000 --time=3:0:0
+#SBATCH -c1 --mem-per-cpu=4000 --time=6:0:0
 
 module purge
-module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 ambertools/22
-rm -f bilayer* *.log slurm*
+module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 ambertools/23
+
+rm -f bilayer* *.log
 packmol-memgen \
-    --lipids CHL1:POPC:POPE:PSM \
-    --salt --salt_c Na+ --saltcon 0.15 \
+    --lipids CHL1:POPC:POPE:PSM//CHL1:POPC:POPE:PSM \
+    --salt --salt_c Na+ --salt_a Cl- --saltcon 0.15 \
     --dist_wat 15 \
-    --ratio 4:2:1:1 \
+    --ratio 4:3:1:2//4:3:1:2 \
     --distxy_fix 100 \
     --parametrize
 ~~~
