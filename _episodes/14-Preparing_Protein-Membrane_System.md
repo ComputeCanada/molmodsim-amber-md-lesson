@@ -51,7 +51,7 @@ packmol-memgen \
 - if the option --parametrize is given the solvated system is bilayer_only_lipid.pdb
 - without --parametrize the solvated system is  bilayer_only.pdb
 
-Another more comlex example with leaflets of different composition:
+This example illustrates the building of a bilayer where leaflets consist of different types of lipids:
 ~~~
 #!/bin/bash
 #SBATCH -c1 --mem-per-cpu=4000 --time=6:0:0
