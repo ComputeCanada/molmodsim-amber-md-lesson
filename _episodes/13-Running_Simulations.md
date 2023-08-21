@@ -484,3 +484,6 @@ gmx grompp -p topol.top  -c restart.gro -t restart.trr -f gromacs_production.mdp
 ~~~
 - Tested with gromacs/2021 and gromacs/2022.- This procedure does not work with gromacs/2023. 
 {: .language-bash}
+
+The workshop data contains an example gromacs_production.mdp in the directory
+workshop/pdb/1RGG/AMBER_to_GROMACS.
