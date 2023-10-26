@@ -220,7 +220,7 @@ pmemd.cuda -O -i equilibration.in \
 {: .language-bash}
 
 #### Equilibration - phase 2
-~~
+~~~
 Equilibration 2 
  &cntrl
   imin=0,         	! Molecular dynamics
@@ -229,7 +229,7 @@ Equilibration 2
   ntc=2,          	! SHAKE on for bonds with hydrogen
   ntf=2,         	! No force evaluation for bonds with hydrogen
   tol=0.0000001,  	! SHAKE tolerance
-  nstlim=1000000,   ! Number of MD steps
+  nstlim=2500000,   ! Number of MD steps
   ntt=3,            ! Langevin thermostat 
   temp0=300,        ! Target temperature
   gamma_ln=2.0,     ! Collision frquency 
