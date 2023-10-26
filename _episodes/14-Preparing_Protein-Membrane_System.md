@@ -247,7 +247,7 @@ Equilibration 2
 ~~~
 {: .file-content}
 
-It was found that Monte Carlo barostat results in the depression of areas per lipid  [Lipid21: Complex Lipid Membrane Simulations with AMBER](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9007451/). Berendsen barostat is recommended for lipid bilayer simulations with AMBER.
+As it was found that Monte Carlo barostat results in the depression of areas per lipid Berendsen barostat is recommended for lipid bilayer simulations with AMBER  [[Lipid21: Complex Lipid Membrane Simulations with AMBER]](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9007451/).
 
 Submission script
 ~~~
