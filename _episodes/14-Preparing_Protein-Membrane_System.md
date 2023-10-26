@@ -98,6 +98,172 @@ Bilayers with different leaflet composition can be generated:
 
 --lipids CHL1:POPC:POPE:PSM//CHL1:POPC:POPE:PSM:POPS:POPI:POGL --ratio 4:4:2:1//6:2:3:2:2:2:2  
 
+### Simulating a packed membrane system.
+
+#### Energy minimization
+Minimization input file (minimization.in).
+~~~
+Minimization
+ &cntrl
+  imin=1,       ! Minimization 
+  ntmin=3,      ! Steepest Descent 
+  maxcyc=1000,  ! Maximum number of cycles for minimization
+  ntpr=10,      ! Print to mdout every ntpr steps        
+  ntwr=1000,    ! Write a restart file every ntwr steps
+  cut=10.0,     ! Nonbonded cutoff
+ /
+ ~~~
+ {: .file-content}
+
+ Submission script
+ ~~~
+ #!/bin/bash
+#SBATCH --mem-per-cpu=4000 --ntasks=10 --time=6:0:0 
+
+module purge
+module load StdEnv/2020  gcc/9.3.0  cuda/11.4  openmpi/4.0.3 amber/20.12-20.15
+
+srun sander.MPI -O -i min.in \
+-o minimization.out \
+-p ../bilayer.parm7 \
+-c ../bilayer.rst7 \
+-r minimized.rst7 
+ ~~~
+{: .language-bash}
+
+#### Heating
+~~~
+Heating 
+ &cntrl
+  imin=0,         	! Molecular dynamics
+  ntx=1,          	! Read coordinates with no initial velocities
+  ntc=2,          	! SHAKE on for bonds with hydrogen
+  ntf=2,         	! No force evaluation for bonds with hydrogen
+  tol=0.0000001,  	! SHAKE tolerance
+  nstlim=20000,   	! Number of MD steps
+  ntt=1,          	! Berendsen thermostat
+  tempi=100,       	! Initial temperature
+  temp0=300,        ! Target temperature
+  tautp=5.0,        ! Time constant for heat bath coupling
+  ntpr=100,         ! Write energy info every ntwr steps 
+  ntwr=10000,       ! Write restart file every ntwr steps
+  ntwx=2000,      	! Write to trajectory file every ntwx steps
+  dt=0.001,       	! Timestep 
+  ntb=2,            ! Constant pressure periodic bc.
+  barostat=1,       ! Berendsen barostat
+  taup=5,           ! Pressure relaxation time
+  ntp=3,            ! Semiisotropic pressure scaling
+  csurften=3,       ! Constant surface tension with interfaces in the xy plane
+  cut=10.0,         ! Nonbonded cutoff
+ /
+~~~
+{: .file-content}
+
+Submission script
+~~~
+#!/bin/bash
+#SBATCH --mem-per-cpu=4000 --gpus-per-node=v100:1 --time=6:0:0 
+
+module purge
+module load StdEnv/2020  gcc/9.3.0  cuda/11.4  openmpi/4.0.3 amber/20.12-20.15
+
+pmemd.cuda -O -i heating.in \
+-o heating.out \
+-p ../bilayer.parm7 \
+-c minimized.rst7 \
+-r heated.rst7 \
+~~~
+{: .language-bash}
+
+#### Equilibration phase 1
+~~~
+Equilibration 1 
+ &cntrl
+  imin=0,         	! Molecular dynamics
+  irest=1,          ! Restart
+  ntx=5,          	! Read positions and velocities
+  ntc=2,          	! SHAKE on for bonds with hydrogen
+  ntf=2,         	! No force evaluation for bonds with hydrogen
+  tol=0.0000001,  	! SHAKE tolerance
+  nstlim=100000,   	! Number of MD steps
+  ntt=1,          	! Berendsen thermostat
+  temp0=300,        ! Set temperature
+  tautp=5.0,        ! Time constant for heat bath coupling
+  ntpr=100,         ! Write energy info every ntwr steps 
+  ntwr=10000,       ! Write restart file every ntwr steps
+  ntwx=2000,      	! Write to trajectory file every ntwx steps
+  dt=0.001,       	! Timestep (ps)
+  ntb=2,            ! Constant pressure periodic bc.
+  barostat=1,       ! Berendsen barostat
+  taup=5,           ! Pressure relaxation time
+  ntp=3,            ! Semiisotropic pressure scaling
+  csurften=3,       ! Constant surface tension with interfaces in the xy plane
+  cut=10.0,         ! Nonbonded cutoff 
+ /
+~~~
+{: .file-content}
+
+Submission script
+~~~
+#!/bin/bash
+#SBATCH --mem-per-cpu=4000 --gpus-per-node=v100:1 --time=6:0:0 
+
+module purge
+module load StdEnv/2020  gcc/9.3.0  cuda/11.4  openmpi/4.0.3 amber/20.12-20.15
+
+pmemd.cuda -O -i equilibration.in \
+-o eq-1.out \
+-p ../bilayer.parm7 \
+-c heated.rst7 \
+-r eq-1.rst7 \
+~~~
+{: .language-bash}
+
+#### Equilibration - phase 2
+~~
+Equilibration 2 
+ &cntrl
+  imin=0,         	! Molecular dynamics
+  irest=1           ! Restart
+  ntx=5,          	! Read  positions and  velocities
+  ntc=2,          	! SHAKE on for bonds with hydrogen
+  ntf=2,         	! No force evaluation for bonds with hydrogen
+  tol=0.0000001,  	! SHAKE tolerance
+  nstlim=1000000,   ! Number of MD steps
+  ntt=3,            ! Langevin thermostat 
+  temp0=300,        ! Target temperature
+  gamma_ln=2.0,     ! Collision frquency 
+  ntpr=100,         ! Write energy info every ntwr steps 
+  ntwr=10000,       ! Write restart file every ntwr steps
+  ntwx=10000,      	! Write to trajectory file every ntwx steps
+  dt=0.002,       	! Timestep (ps)
+  ntb=2,            ! Constant pressure periodic bc.
+  barostat=1,       ! Berendsen barostat
+  taup=1.0,         ! Pressure relaxation time
+  ntp=3,            ! Semiisotropic pressure scaling
+  csurften=3,       ! Constant surface tension with interfaces in the xy plane
+  cut=10.0,         ! Nonbonded cutoff 
+ /
+~~~
+{: .file-content}
+
+It was found that Monte Carlo barostat results in the depression of areas per lipid  [Lipid21: Complex Lipid Membrane Simulations with AMBER](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9007451/). Berendsen barostat is recommended for lipid bilayer simulations with AMBER.
+
+Submission script
+~~~
+#!/bin/bash
+#SBATCH --mem-per-cpu=4000 --gpus-per-node=v100:1 --time=6:0:0 
+
+module purge
+module load StdEnv/2020  gcc/9.3.0  cuda/11.4  openmpi/4.0.3 amber/20.12-20.15
+
+pmemd.cuda -O -i equilibration-2.in \
+-o eq-2.out \
+-p ../bilayer.parm7 \
+-c eq-1.rst7 \
+-r eq-2.rst7 \
+~~~
+{: .language-bash}
 
 ### Embedding a protein into a bilayer
 We will use PDB file 6U9P (wild-type MthK pore in ~150 mM K+) for this exercise.
