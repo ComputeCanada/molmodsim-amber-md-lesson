@@ -175,7 +175,7 @@ pmemd.cuda -O -i heating.in \
 ~~~
 {: .language-bash}
 
-#### Equilibration phase 1
+#### Equilibration - phase 1
 ~~~
 Equilibration 1 
  &cntrl
