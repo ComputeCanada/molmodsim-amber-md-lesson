@@ -247,9 +247,6 @@ Equilibration 2
 ~~~
 {: .file-content}
 
-AMBER offers only two barostats:  Monte Carlo and Berendsen. As it was found that Monte Carlo barostat results in the depression of areas per lipid, it is not recommended for lipid bilayer simulations with AMBER  [[Lipid21: Complex Lipid Membrane Simulations with AMBER]](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9007451/). Berendsen barostat does not strictly sample from the isothermal-isobaric ensemble and typically yields volume fluctuations that are too low. 
-
-
 Submission script
 ~~~
 #!/bin/bash
@@ -266,8 +263,14 @@ pmemd.cuda -O -i equilibration-2.in \
 ~~~
 {: .language-bash}
 
+AMBER offers only two barostats:  Monte Carlo and Berendsen. As it was found that Monte Carlo barostat results in the depression of areas per lipid, it is not recommended for lipid bilayer simulations with AMBER  [[Lipid21: Complex Lipid Membrane Simulations with AMBER]](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9007451/). Berendsen barostat does not strictly sample from the isothermal-isobaric ensemble and typically yields volume fluctuations that are too low. 
+If you need correct thermodynamocs ensemble you can continue simulating this system in another MD package that offers more pressure coupling algorithms. In the next section we will demonstrate transferring equilibrated MD system from AMBER to GROMACS
+
 #### Moving to GROMACS
-Change directory to 4-equilibration.
+
+- Change directory to 4-equilibration.
+- Create a directory for GROMACS simulation
+- Load ambertools and gromacs modules and start python
 
 ~~~
 mkdir ../5-amb2gro 
@@ -280,8 +283,8 @@ python
 {: .language-bash}
 
 
-
-#### Converting amber restart and toloplogy to gromacs.
+#### Converting amber restart and topology to gromacs.
+Use parmed AMBER utility to convert AMBER topology and restart files to GROMACS.
 
 ~~~
 import parmed as pmd
@@ -294,9 +297,10 @@ quit()
 ~~~
 {: .language-python}
 
+These parmed commands will create two GROMACS files: restart.gro and bilayer.top
 
 #### Creating and editing index file
-
+Next we create and edit index file.
 ~~~
 gmx make_ndx -f restart.gro << EOF
 del 12 
@@ -316,9 +320,9 @@ gmx make_ndx -f restart.gro -n index.ndx
 ~~~
 {: .language-bash}
 
-You should have two new groups: 
-12 Lipids              : 53850 atoms
-13 WaterIons           : 66792 atoms
+You should have two new groups:  
+12 Lipids              : 53850 atoms 
+13 WaterIons           : 66792 atoms 
 
 #### Creating GROMACS restart file
 
@@ -390,7 +394,6 @@ gmx grompp -p bilayer.top  -c restart.gro -t restart.trr -f production.mdp -maxw
 #SBATCH  --mem-per-cpu 4000 --time 1:0:0   
 #SBATCH  -c10 --gpus-per-node=v100:1
   
-
 module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 gromacs/2023.2
 
 srun gmx mdrun -ntomp ${SLURM_CPUS_PER_TASK:-1} \
