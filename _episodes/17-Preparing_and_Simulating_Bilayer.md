@@ -1,4 +1,20 @@
-## How to pack a complex mixture of different lipid species into a bilayer and get it moving?
+---
+title: "How to pack a complex mixture of different lipid species into a bilayer and get it moving?"
+teaching: 30
+exercises: 5
+questions:
+- "How to pack a complex mixture of different lipid species into a bilayer?"
+- "How to minimize energy?"
+- "How to heat up a simulation system?"
+- "How to equilibrate a simulation system?"
+objectives:
+- "Prepare a lipid bilayer"
+- "Energy minimize, heat up and equilibrate the system"
+keypoints:
+- " "
+---
+
+## Introduction
 
 This in-depth tutorial guides you through the process of building a bilayer, preparing simulation input files, minimizing energy, equilibrating the system, and running an equilibrium molecular dynamics simulation. You will need to follow a number of steps to complete the tutorial. If you are already familiar with some of these topics, you can skip them and focus on the ones you don't know about.
 
