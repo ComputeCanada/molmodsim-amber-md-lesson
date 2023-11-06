@@ -18,7 +18,7 @@ keypoints:
 
 This in-depth tutorial guides you through the process of building a bilayer, preparing simulation input files, minimizing energy, equilibrating the system, and running an equilibrium molecular dynamics simulation. You will need to follow a number of steps to complete the tutorial. If you are already familiar with some of these topics, you can skip them and focus on the ones you don't know about.
 
-### Step 1: A bilayer of lipids is formed by packing them together.
+### 1. A bilayer of lipids is formed by packing them together.
 
 It has been shown that the composition of the phospholipids in the erythrocyte membrane is asymmetric. Here is an article that reviews this topic in detail:
 [Interleaflet Coupling, Pinning, and Leaflet Asymmetry—Major Players in Plasma Membrane Nanodomain Formation](https://www.frontiersin.org/articles/10.3389/fcell.2016.00155/full). 
@@ -43,14 +43,46 @@ packmol-memgen \
 ~~~
 {: .language-bash}
 
+
 The job takes about 30 minutes. It generates several output files:  
 - AMBER topology         bilayer_only_lipids.top 
 - AMBER coordinates      bilayer_only_lipids.crd
 - PDB-formatted system   bilayer_only_lipids.pdb 
 
-### Step 2: Creating a system with different force filed parameters. 
+By default parametrization uses LIPID17, ff14SB and TIP3P force fields.
 
-There is a file named bilayer_only_lipids.pdb that can be used to create topology files using AMBER force fields that have not been included in packmol-memgen yet. We only need to know one more thing before we can proceed: the size of the periodic box. It can be extracted from the file bilayer_only_lipid.top:
+Figure:
+Neutral: POPC green, POPE blue, PSM white
+Charged: POPS red
+
+### 2. Preparing the bilayer for simulation with a different force field. 
+
+The file bilayer_only_lipids.pdb can be used to create topology files using any AMBER force field distributed with AmberTools. This allows to prepare a simulation system using a force field that is not provided with packmol-memgen. 
+
+However, if your system contains SPM this file will not work because packmol-memgen erroneoiusly adds TER record between the lipid headgroup (SPM) and second acyl tail (SA). This splits PSM molecule in 2 parts: PA+SPM and SA.  
+
+For this reason we will, create a pdb file from AMBER topology using parmed and then use tleap to reparameterize it using a polarizable water model OPC3-Pol which is not yet available in packmol-memgen natively. 
+
+~~~
+module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 ambertools/23
+python
+~~~
+{: .language-bash}
+
+~~~
+import parmed
+amber = parmed.load_file("bilayer_only_lipid.top", "bilayer_only_lipid.crd")
+amber.save("bilayer_only_lipid_fixed.pdb")
+quit()
+~~~
+
+Alternatively you can fix the file bilayer_only_lipid.pdb manually using standard unix commands grep and awk. The following command removes these TER records:
+~~~
+grep -n  "H22 SPM " bilayer_only_lipid.pdb | cut -f1 -d: |  awk '{print $0 + 1}' | awk -F, 'NR==FNR { nums[$0]; next } !(FNR in nums)' - bilayer_only_lipid.pdb > bilayer_only_lipid_fixed.pdb
+~~~
+{: .language-bash}
+
+We only need to know one more thing before we can proceed: the size of the periodic box. It can be extracted from the file bilayer_only_lipid.top:
 
 ~~~
 grep -A2 BOX bilayer_only_lipid.top
@@ -60,7 +92,7 @@ grep -A2 BOX bilayer_only_lipid.top
 ~~~
 ...
 %FORMAT (5E168)                                                 
-  9.00000000E+01  1.03537600E+02  1.03536600E+02  9.99353000E+01
+  9.00000000E+01  1.03536600E+02  1.03744300E+02  9.97203000E+01
 ~~~
 {: .output}
 
@@ -71,8 +103,8 @@ module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 ambertools/23
 tleap -f <(cat << EOF
 source leaprc.water.opc3pol
 source leaprc.lipid21 
-sys=loadpdb bilayer_only_lipid.pdb
-set sys box {103.5 103.5 99.9}
+sys=loadpdb bilayer_only_lipid_fixed.pdb
+set sys box {103.5 103.7 99.7}
 saveamberparm sys bilayer.parm7 bilayer.rst7
 quit
 EOF)
@@ -81,7 +113,7 @@ EOF)
 
 Don't forget to replace {103.5 103.5 99.9} with your own numbers.
 
-### Step 3: Energy minimization
+### 3. Energy minimization
 A system must be optimized in order to eliminate clashes and prepare it for molecular dynamics. 
 
 To run energy minimization we need three files:  
@@ -121,7 +153,7 @@ srun sander.MPI -O -i min.in \
 
 When the optimization job is completed, the file minimized.rst7 will contain the optimized coordinates that were produced.
 
-### Step 4: Heating
+### 4. Heating
 ~~~
 Heating 
  &cntrl
@@ -165,7 +197,7 @@ pmemd.cuda -O -i heating.in \
 ~~~
 {: .language-bash}
 
-### Step 5: The first phase of the equilibration process.
+### 5. The first phase of the equilibration process.
 ~~~
 Equilibration 1 
  &cntrl
@@ -209,7 +241,7 @@ pmemd.cuda -O -i equilibration.in \
 ~~~
 {: .language-bash}
 
-### Step 6: The second phase of the equilibration process.
+### 6. The second phase of the equilibration process.
 ~~~
 Equilibration 2 
  &cntrl
