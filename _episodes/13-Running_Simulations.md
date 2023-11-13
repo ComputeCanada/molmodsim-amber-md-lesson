@@ -84,7 +84,7 @@ The general minimization strategy is first to restrict all solute atoms with the
 {: .instructor_notes} 
 
 {: .self_study_text} 
-- it is safer to carry out several minimization steps gradually releasing restraints.
+- It is safer to start minimization with restrained macromolecules and gradually release restraints in several minimization steps.
 {: .self_study_text} 
 
 For example, we could do a two stage minimization. In the first stage we restrain all original atoms. In the second stage we restrain only the original backbone atoms. Our example protein is very small and we have limited time, so we skip the first step and restrain only protein backbone.
@@ -139,7 +139,7 @@ END
 {: .file-content}
 
 - There are several molecular dynamics programs in AMBER package: *sander, sander.MPI, pmemd, pmemd.MPI, pmemd.cuda*, and *pmemd.cuda.MPI*.  
-- *Sander* is distributed free, *pmemd* is high performance binary which requires a license.
+- *Sander* is a free CPU-only simulation engine. A high-performance simulation program is available free of charge for non-commercial use under the name *pmemd*. A license agreement must be signed by users to use.
 
 Submission script *submit.sh*:
 ~~~
@@ -188,14 +188,14 @@ In the examples bonds with hydrogens are not constrained and the default timeste
 ~~~
 Heating 
 &cntrl 
-ntt=1,                               ! Use Berendsen thermostat
-tempi=150,temp0=300,tautp=1,         ! Initial and reference temperature, time constant
-ntp=0,                               ! No barostat
-ntpr=100,                            ! Print energies every ntpr steps
-ntwx=1000,                           ! Write coordinates every ntws steps
-nstlim=10000,                        ! Simulate nstlim steps
-ntr=1,                               ! Use harmonic cartesian restraints 
-restraint_wt=10,                     ! Restraint force kcal/mol
+ntt=1,                                  ! Use Berendsen thermostat
+tempi=150,temp0=300,tautp=1,            ! Initial and reference temperature, time constant
+ntp=0,                                  ! No barostat
+ntpr=100,                               ! Print energies every ntpr steps
+ntwx=1000,                              ! Write coordinates every ntws steps
+nstlim=10000,                           ! Simulate nstlim steps
+ntr=1,                                  ! Use harmonic cartesian restraints 
+restraint_wt=10,                        ! Restraint force kcal/mol
 restraintmask="(:1-96)&(@CA,N,O)",
 &end
 END
@@ -439,13 +439,13 @@ EOF
 
 #### Generate positional restraints file for the protein backbone.
 ~~~
-gmx genrestr -f inpcrd.gro -fc 500.0 -n index.ndx -o backbone.itp<<EOF
+gmx genrestr -f inpcrd.gro -fc 500.0 -n index.ndx -o backbone.itp << EOF
 Backbone
 EOF
 ~~~
 {: .language-bash}
 
-Add definitions of the position restraints to the topology "gromacs.top". Use a text editor of your choice to insert the following lines at the end of the syste1 molecule block:
+Add definitions of the position restraints to the topology "gromacs.top". Use a text editor of your choice to insert the following lines at the end of the "system" molecule block:
 ~~~
 #ifdef POSRES
 #include "backbone.itp"
@@ -466,10 +466,8 @@ define = -D_POSRES
 {: .file-content}
 
 #### Convert AMBER restart to GROMACS restart.
-
 ~~~
 import parmed as pmd
-
 amber = pmd.load_file("prmtop.parm7", "rest.rst7")
 ncrest=pmd.amber.Rst7("rest.rst7")
 amber.velocities=ncrest.vels
@@ -477,12 +475,10 @@ amber.save("restart.gro")
 ~~~
 {: .language-python}
 
-#### Convert GROMACS restart to portable trajectory and make binary topology
+#### Create portable binary restart (topol.tpr) file
 ~~~
-gmx trjconv -f restart.gro -o restart.trr
-gmx grompp -p topol.top  -c restart.gro -t restart.trr -f gromacs_production.mdp
+gmx grompp -p topol.top -c restart.gro -f gromacs_production.mdp
 ~~~
-- Tested with gromacs/2021 and gromacs/2022.- This procedure does not work with gromacs/2023. 
 {: .language-bash}
 
 The workshop data contains an example gromacs_production.mdp in the directory

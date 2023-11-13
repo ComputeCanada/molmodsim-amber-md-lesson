@@ -1,5 +1,5 @@
 ---
-title: "Preparing a Protein-Membrane Simulation System"
+title: "Preparation and simulation of membrane and membrane-protein systems"
 teaching: 30
 exercises: 5
 questions:
@@ -12,7 +12,10 @@ keypoints:
 - " "
 ---
 
-### Lipid force field
+
+## Creating simulation systems with packmol-memgen
+
+### AMBER Lipid force fields
 Amber currently includes Lipid21 as its main membrane force field.  In this modular force field, lipids are modeled as polymers composed of a headgroup and acyl tails. Essentially, this means that each headgroup and tail are independent modules, analogous to protein residues. Each lipid molecule is composed of a tail analogous to an "N-terminal", a central headgroup and another tail analogous to a "C-terminal". You can combine any headgroup with any pair of tails in this force field. Ok, now you should have an idea how the lipids are represented in the Lipid21 force field, and what lipids you can include in a simulation. 
 
 - There is a great deal of information provided in [Dickson, 2022](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9007451/) regarding best practices when using AMBER for lipid simulations.
@@ -21,7 +24,10 @@ Amber currently includes Lipid21 as its main membrane force field.  In this modu
 Known Issues: 
 Using MC barostat with hard LJ cutoff is known to cause bilayer deformation. It is recommended to use an LJ force switch when running simulations with the MC barostat.[Gomez, 2021](https://onlinelibrary.wiley.com/doi/abs/10.1002/jcc.26798)
 
-### Creating simulation systems with packmol-memgen
+- To see all available lipids use  `--available_lipids_all`, but the list will have thousands of items!
+
+### Creating a membrane-only simulation system
+
 - What lipids are available?
 
 ~~~
@@ -30,9 +36,8 @@ packmol-memgen --available_lipids
 ~~~
 {: .language-bash}
 
-- To see all available lipids use  `--available_lipids_all`, but the list will have thousands of items!
 
-#### Creating a membrane-only simulation system
+
 Submission script for creating a membrane-only simulation system:
 ~~~
 #!/bin/bash
@@ -119,8 +124,13 @@ quit
 `--salt`
 
 
-### Preparing ligands 
+## Generating topologies and parameters for small molecules.
 
+### Automate Topology Builder web service. 
+[ATB](https://atb.uq.edu.au) is limited to GROMOS 54A7 force field.
+
+
+### ANTECHAMBER
 - Download hexanediol HEZ.cif: wget https://www.rcsb.org/ligand/HEZ
 - Convert .cif to .pdb: https://mmcif.pdbj.org/converter/index.php?l=en
 
@@ -154,6 +164,14 @@ saveoff HEZ hez.lib
 {: .leap}
 
 Of course point charges are not very accurate because they are derived using semi-empirical method, but antechamber can also use results of gaussian QM calculations.  
+
+### AnteChamber PYthon Parser interfacE (ACPYPE)
+
+[ACPYPE - AnteChamber PYthon Parser interfacE](https://bmcresnotes.biomedcentral.com/articles/10.1186/1756-0500-5-367). 
+
+- Simplifies the automatic generation of topology and parameters in different formats for different molecular mechanics programs.
+
+
 
 ### Links to advanced AMBER tutorials
 - [Placing waters and ions using 3D-RISM and MOFT](http://ambermd.org/tutorials/advanced/tutorial34/index.html)
