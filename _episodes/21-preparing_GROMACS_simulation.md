@@ -1,5 +1,5 @@
 ---
-title: "Preparing a system for simulation with GROMACS"
+title: "Hands-on 4: Preparing a system for simulation with GROMACS"
 teaching: 30
 exercises: 5
 questions:

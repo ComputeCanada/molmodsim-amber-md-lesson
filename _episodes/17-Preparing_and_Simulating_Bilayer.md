@@ -1,5 +1,5 @@
 ---
-title: "How to pack a complex mixture of different lipid species into a bilayer and get it moving?"
+title: "Hands-on 1: Packing a complex mixture of different lipid species into a bilayer and simulating it"
 teaching: 30
 exercises: 5
 questions:
