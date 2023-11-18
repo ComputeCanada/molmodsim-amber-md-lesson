@@ -29,7 +29,7 @@ This model provides a convenient programming environment, but the main problem i
 {: .instructor_notes} 
 
 {: .self_study_text} 
-- SANDER is a free simulation engine distributed with the AmberTools package.
+SANDER is a free simulation engine distributed with the AmberTools package.
 {: .self_study_text} 
 
 
