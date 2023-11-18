@@ -1,16 +1,3 @@
----
-title: "Running Simulations"
-teaching: 30
-exercises: 5
-questions:
-- "How to minimize energy of a system?"
-- "How to run molecular dynamics from cold start?"
-objectives:
-- "?"
-keypoints:
-- "?"
----
-
 ## 1. Running simulations with AMBER
 
 ### 1.1 AMBER MD engines.
