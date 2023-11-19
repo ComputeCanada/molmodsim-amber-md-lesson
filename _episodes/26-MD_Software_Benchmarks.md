@@ -34,6 +34,8 @@ srun gmx mdrun -s next.tpr -cpi state.cpt
 ~~~
 {: .file-content}
 
+[Benchmark](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=GROMACS.mpi&software_id=&module_contains=&module_version=&site_contains=Narval&gpu_model=&cpu_model=&arch=&dataset=6n4o)
+
 #### Submission script for a single GPU simulation 
 ~~~
 #!/bin/bash
@@ -60,6 +62,7 @@ srun gmx mdrun -ntomp ${SLURM_CPUS_PER_TASK:-1} \
 ~~~
 {: .file-content}
 
+[Benchmark](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=GROMACS.cuda.mpi&software_id=&module_contains=&module_version=&site_contains=Narval&gpu_model=&cpu_model=&arch=&dataset=6n4o)
 
 ### PMEMD
 #### Submission script for a single GPU simulation
@@ -75,7 +78,7 @@ pmemd.cuda -O -i pmemd.in -o production.log -p prmtop.parm7 -c restart.rst7
 {: .file-content}
 
 #### Submission script for a multiple GPU simulation
-Multiple GPU pmemd version is meant to be used only for AMBER methods running multiple simulations, such as replica exchange. A single simulation does not scale beyond 1 GPU [benchmark](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=GROMACS.cuda.mpi&software_id=&module_contains=&module_version=&site_contains=Narval&gpu_model=&cpu_model=&arch=&dataset=6n4o).
+Multiple GPU pmemd version is meant to be used only for AMBER methods running multiple simulations, such as replica exchange. A single simulation does not scale beyond 1 GPU.
 
 ~~~
 #!/bin/bash
@@ -90,17 +93,19 @@ srun pmemd.cuda.MPI -O -i pmemd_prod.in -o production.log \
 ~~~
 {: .file-content}
 
-### NAMD
-#### Submission script for a GPU simulation (on Siku)
+[Benchmark](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=PMEMD.cuda.MPI&software_id=&module_contains=&module_version=&site_contains=Narval&gpu_model=&cpu_model=&arch=&dataset=6n4o)
+
+### NAMD 3
+#### Submission script for a GPU simulation
 ~~~
 #!/bin/bash
-#SBATCH --time=2:0:0 --mem-per-cpu=2000 
-#SBATCH -c16 --gres=gpu:v100:2 --partition=all_gpus
+#SBATCH -c2 --gpus-per-node=a100:2  
+#SBATCH --mem-per-cpu=2000 --time=1:0:0
+NAMDHOME=$HOME/NAMD_3.0b3_Linux-x86_64-multicore-CUDA
 
-ml StdEnv/2020 cuda/11.0 namd-multicore/2.14
-namd2 +p${SLURM_CPUS_PER_TASK} +idlepoll heating.in
+$NAMDHOME/namd3 +p${SLURM_CPUS_PER_TASK} +idlepoll namd3_input.in  
 ~~~
-
+[Benchmark](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=&software_id=36&module_contains=&module_version=&site_contains=Narval&gpu_model=&cpu_model=&arch=&dataset=6n4o)
 
 ### How to make your simulation run faster?
 It is possible to increase time step to 4 fs with hydrogen mass re-partitioning. The idea is that hydrogen masses are increased and at the same time masses of the atoms to which these hydrogens are bonded are decreased to keep the total mass constant. Hydrogen masses can be automatically re-partitioned with the *parmed* program.
