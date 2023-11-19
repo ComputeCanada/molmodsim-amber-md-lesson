@@ -299,6 +299,13 @@ pmemd.cuda -O  -i equilibrate_2.in -p prmtop -c equilibrated_1.nc  -r equilibrat
 ~~~
 {: .language-bash}
 
+#### References
+1. [An overview of the Amber biomolecular simulation package](https://wires.onlinelibrary.wiley.com/doi/10.1002/wcms.1121)
+2. [Running simulations with GPU acceleration](https://ambermd.org/GPUSupport.php)
+3. [Routine Microsecond Molecular Dynamics Simulations with AMBER on GPUs. 1. Generalized Born](https://pubmed.ncbi.nlm.nih.gov/22582031/)
+4. [Routine Microsecond Molecular Dynamics Simulations with AMBER on GPUs. 2. Explicit Solvent Particle Mesh Ewald](https://pubmed.ncbi.nlm.nih.gov/26592383/)
+
+
 ### Simulation with NAMD
 Because NAMD natively supports AMBER topology files, simulating a system prepared with AMBER tools requires only NAMD simulation input files and NAMD - compatible coordinate files such as pdb or NAMD binary coordinates.
 

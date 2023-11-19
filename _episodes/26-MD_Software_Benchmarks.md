@@ -1,5 +1,5 @@
-
-title: "A Comparative Performance Ranking of the Molecular Dynamics Software"
+---
+title: "Hands-on 6: A Comparative Performance Ranking of the Molecular Dynamics Software"
 teaching: 30
 exercises: 5
 questions:
@@ -13,11 +13,7 @@ keypoints:
 
 Requesting the right computational resources is essential for fast and efficient simulations. Submitting a simulation with more CPUs does not necessarily mean that it will run faster. In some cases, a simulation will run slower with more CPUs. There is also a choice between using CPU or GPU versions. When deciding on the number of CPUs, it is crucial to consider both simulation speed and CPU efficiency. If CPU efficiency is low, you will be wasting resources. This will negatively impact your priority, and as a result, you will not be able to run as many jobs as you would if you used CPUs more efficiently. To assess CPU efficiency, you need to know how fast a serial simulation runs and then compare the expected 100% efficient speedup (speed on 1CPU x N) with the actual speedup on N CPUs.
 
-Below are the benchmark results comparing simulations of the same system with several MD packages. These results may give you valuable insight into how fast and efficient you can expect your simulation to run with different packages/resources.
-
-![Graph: MD-benchmarks]({{ page.root }}/fig/MD-benchmarks.svg)
-
-The numbers printed on the bars show CPU efficiency.
+[Here](https://mdbench.ace-net.ca/mdbench/) are the benchmark results comparing simulations of the same system with several MD packages. These results may give you valuable insight into how fast and efficient you can expect your simulation to run with different packages/resources.
 
 ## Submission scripts for running the benchmarks.
 ### GROMACS

@@ -1,5 +1,5 @@
 ---
-title: "Hands-on 3: Preparing a Complex RNA-protein System"
+title: "Hands-on 3A: Preparing a Complex RNA-protein System"
 teaching: 30
 exercises: 5
 questions:

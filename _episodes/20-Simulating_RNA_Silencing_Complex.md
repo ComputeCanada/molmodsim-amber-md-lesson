@@ -1,5 +1,5 @@
-
-title: "Running simulations with AMBER"
+---
+title: "Hands-on 3B: Simulating a Complex RNA-protein System"
 teaching: 30
 exercises: 5
 questions:
@@ -8,18 +8,7 @@ keypoints:
 - " "
 ---
 
-## 1. Running simulations with AMBER
-### Performance benchmarks
-
-![Graph: AMBER benchmarks]({{ page.root }}/fig/AMBER-benchmarks.svg)
-
-#### References
-1. [An overview of the Amber biomolecular simulation package](https://wires.onlinelibrary.wiley.com/doi/10.1002/wcms.1121)
-2. [Running simulations with GPU acceleration](https://ambermd.org/GPUSupport.php)
-3. [Routine Microsecond Molecular Dynamics Simulations with AMBER on GPUs. 1. Generalized Born](https://pubmed.ncbi.nlm.nih.gov/22582031/)
-4. [Routine Microsecond Molecular Dynamics Simulations with AMBER on GPUs. 2. Explicit Solvent Particle Mesh Ewald](https://pubmed.ncbi.nlm.nih.gov/26592383/)
-
-
+## Running simulations with AMBER
 ### 1.1 Energy minimization.
 Before simulating a system we need to relax it. Any atomic clashes must be resolved, and potential energy minimized to avoid unphysically large forces that can crash a simulation. 
 
