@@ -101,6 +101,7 @@ source leaprc.water.opc3pol
 source leaprc.lipid21 
 sys=loadpdb bilayer-lipid21-opc3pol.pdb
 set sys box {103.5 103.7 99.7}
+set default nocenter on
 saveamberparm sys bilayer.parm7 bilayer.rst7
 quit
 EOF)
