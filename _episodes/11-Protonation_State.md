@@ -14,43 +14,62 @@ keypoints:
 - "Assigning correct protonation states of aminoacids in proteins is crucial for realistic MD simulations"
 - "Conformational changes in proteins may be accompanied by changes in protonation pattern."
 ---
-### Simulations need to consider protonation states of amino acids
+### It is important to consider amino acid protonation states
 
-{: .instructor_notes} 
 Setting up a simulation system requires assigning protonation states and, possibly, tautomers to the HIS residues. The protonation states of titratable amino acids (Arg, Lys, Tyr, Cys, His, Glu, Asp) depend on the local micro-environment and pH. A highly polar microenvironment will stabilize the charged form, while a less polar microenvironment will favor the neutral form. At physiological pH, TYR, LYS, CYS, and ARG are almost always in their standard protonation states, while GLU, ASP, and HIS can be in non-standard forms.
 {: .instructor_notes} 
 
-{: .instructor_notes} 
 The protonation pattern of proteins is crucial for their catalytic function and structural stability. For a classic MD simulation, protonation states must be determined and assigned before the simulation can begin. For realistic MD simulations, it is essential to assign the right protonation states. The wrong protonation states can have dramatic effects and invalidate the results. Numerous MD simulation studies have demonstrated the importance of protein protonation states [[1](http://doi.org/10.1529/biophysj.105.059329), [2](http://doi.org/10.7554/eLife.16616), [3](https://doi.org/10.1016/j.cplett.2018.12.039), [4](https://doi.org/10.1021/jacs.9b06064), [5](https://doi.org/10.1016/j.dib.2016.07.040)].
 {: .instructor_notes} 
 
-{: .self_study_text} 
 - The protonation pattern of proteins is crucial for their catalytic function and structural stability. 
 -  Numerous MD simulation studies have demonstrated the importance of protein protonation states [[1](http://doi.org/10.1529/biophysj.105.059329), [2](http://doi.org/10.7554/eLife.16616), [3](https://doi.org/10.1016/j.cplett.2018.12.039), [4](https://doi.org/10.1021/jacs.9b06064), [5](https://doi.org/10.1016/j.dib.2016.07.040)].
 {: .self_study_text} 
 
 
 ### How to Determine Protonation States of Residues in a Protein?
-
-{: .instructor_notes} 
+ 
 For predicting the pKa values of protein residues, several web servers and standalone programs are available. The underlying methods used by all of them fall into two broad categories: empirical (such as propka) and Poisson-Boltzmann methods. The disadvantage of the empirical method is that it works well only for proteins similar to those in the training set. It is not guaranteed to work well for all proteins. Programs implementing Poisson-Boltzmann continuum electrostatics have a solid physical basis. Most of them, however, only sample a single protein conformation, which is the primary source of inaccuracy. One exception is MCCE, which samples sidechain rotamers, giving a more precise picture of coupled ionization and position changes. MCCE also has limitations because it does not sample backbone conformations. The most rigorous method is constant pH simulations in which the ionization states are dynamically adjusted in MD simulations. It is a computationally expensive method, but a very efficient GPU implementation of constant pH molecular dynamics has recently been developed and [implemented in AMBER](https://pubs.acs.org/doi/10.1021/acs.jcim.9b00754).
 {: .instructor_notes} 
 
-{: .self_study_text} 
 For predicting the pKa values of protein residues, several web servers and standalone programs are available.
 {: .self_study_text} 
 
-[*H++*](http://newbiophysics.cs.vt.edu/H++/) server. *H++* calculations are based on the classical continuum electrostatic model (a continuous medium where solvent molecules are replaced with the average properties of the solvent). The *H++* program uses AmberTools modules to preprocess a PDB file, and it is able to generate basic topology and coordinate files for MD simulations in AMBER format. *H++* is a single-configuration method, and it automatically selects the "A" conformation without any user intervention. Details of the methodology can be found in the [reference](https://doi.org/10.1093/nar/gks375).
+- [*H++*](http://newbiophysics.cs.vt.edu/H++/) server. *H++* calculations are based on the classical continuum electrostatic model (a continuous medium where solvent molecules are replaced with the average properties of the solvent). The *H++* program uses AmberTools modules to preprocess a PDB file, and it is able to generate basic topology and coordinate files for MD simulations in AMBER format. *H++* is a single-configuration method, and it automatically selects the "A" conformation without any user intervention. Details of the methodology can be found in the [reference](https://doi.org/10.1093/nar/gks375).
+{: .instructor_notes} 
 
-[*PROPKA3.0*](https://github.com/jensengroup/propka-3.0) is the empirical pKa prediction software. 
+- [*H++*](http://newbiophysics.cs.vt.edu/H++/). Continuum electrostatics model
+{: .self_study_text} 
 
-[PlayMolecule-ProteinPrepare](https://www.playmolecule.org/proteinPrepare/) provides complete system preparation. Among the preparation steps are determination of protonation states with PROPKA 3.1, the addition of missing atoms, and optimization of the H-bond network with PDB2PQR 2.1.
+- [*PROPKA3.0*](https://github.com/jensengroup/propka-3.0) is the empirical pKa prediction software. 
+{: .instructor_notes} 
 
-[*PDB2PQR*](https://server.poissonboltzmann.org/pdb2pqr) server. *PDB2PQR* solves Poisson-Boltzmann equation using the APBS solver. 
+- [*PROPKA3.0*](https://github.com/jensengroup/propka-3.0). Empirical pKa prediction. 
+{: .self_study_text} 
 
-[*MCCE*](https://sites.google.com/site/mccewiki/).For more rigorous calculations, try *MCCE* program. *MCCE* uses the same classical continuum electrostatic approach as H++. Besides, *MCCE* calculations consider protein conformational degrees of freedom giving a more accurate picture of coupled ionization and position changes. Taking into account conformational flexibility improves *pKa* prediction significantly. For details of the methodology, see [[ref]](https://doi.org/10.1002/jcc.21222).
+- [PlayMolecule-ProteinPrepare](https://www.playmolecule.org/proteinPrepare/) provides complete system preparation. Among the preparation steps are determination of protonation states with PROPKA 3.1, the addition of missing atoms, and optimization of the H-bond network with PDB2PQR 2.1.
+{: .instructor_notes} 
 
-[*PKAD*](http://compbio.clemson.edu/pkad) database. *PKAD* is a database of experimentally determined pKa values. This database currently contains *pKa* values for residues in 157 wild-type and 45 mutant proteins (https://doi.org/10.1093/database/baz024).
+- [PlayMolecule-ProteinPrepare](https://www.playmolecule.org/proteinPrepare/). Based on PROPKA3. 
+{: .self_study_text} 
+
+- [*PDB2PQR*](https://server.poissonboltzmann.org/pdb2pqr) server. *PDB2PQR* solves Poisson-Boltzmann equation using the APBS solver. 
+{: .instructor_notes} 
+
+- [*PDB2PQR*](https://server.poissonboltzmann.org/pdb2pqr). Solves Poisson-Boltzmann equation. 
+{: .self_study_text} 
+
+- [*MCCE*](https://sites.google.com/site/mccewiki/). For more rigorous calculations, try *MCCE* program. *MCCE* uses the same classical continuum electrostatic approach as H++. Besides, *MCCE* calculations consider protein conformational degrees of freedom giving a more accurate picture of coupled ionization and position changes. Taking into account conformational flexibility improves *pKa* prediction significantly. For details of the methodology, see [[ref]](https://doi.org/10.1002/jcc.21222).
+{: .instructor_notes} 
+
+- [*MCCE*](https://sites.google.com/site/mccewiki/). Takes into account conformational flexibility. More accurate and more challenging to use. 
+{: .self_study_text} 
+
+- [*PKAD*](http://compbio.clemson.edu/pkad) database. *PKAD* is a database of experimentally determined pKa values. This database currently contains *pKa* values for residues in 157 wild-type and 45 mutant proteins (https://doi.org/10.1093/database/baz024).
+{: .instructor_notes} 
+
+- [*PKAD*](http://compbio.clemson.edu/pkad). A database of experimentally determined pKa values. 
+{: .self_study_text} 
 
 There is no perfect *pKa* prediction method. Deviations from experimental values can sometimes be significant. The best practice is to compare the results obtained from different techniques and, if possible, to use experimentally measured values.
 
@@ -71,57 +90,75 @@ What protonation states are appropriate for simulating Asp79 and His53 at pH 6?
 {: .challenge}
 
 ## How to select protonation state of a residue?
-### Assigning protonation states with the *GROMACS pdb2gmx* module
-Protonation states can be assigned using the *GROMACS pdb2gmx* program. By default, *pdb2gmx* will select charged forms of LYS, ASP, or GLU. For HIS, it will try to place the proton on either ND1 or NE2 based on an optimal hydrogen bonding conformation. You can override the default behavior and select protonation manually using options  -lys, -asp, -glu, -his.
-
-The downside of this method is that it can not be scripted. The manual selection is cumbersome because *pdb2gmx* will be prompting to select the protonation state for each of the residues in a PDB file. Besides, *pdb2gmx* changes residue names only in the output topology file. Residue names are left unchanged in the output .pdb and .gro files.  
 
 ### Assigning protonation states in structure files
 A more consistent and convenient way to select the desired form of amino acid is to change its name in the structure file before generating a topology. The neutral states of LYS, ASP, and GLU can be chosen by renaming them  LYN, ASH, and GLH, respectively.  You can select the appropriate form of HIS by renaming HIS to HIE (proton on NE2), HID (proton on ND1), or HIP (both protons).
+{: .instructor_notes}
 
-Let's change ASP20 and ASP26 in the "protein.pdb" file created previously from the "1ERT.pdb" to the neutral form ASH.  We can either the *leap* module from the *AmberTools* or *VMD*.
+- Change residue name in the structure file
 
-### Selecting protonation states with the *AMBER LEaP* module.
+```
+LYS (+1) - LYN  (0)  
+ASP (-1) - ASH  (0)  
+GLU (-1) - GLH  (0)  
+HIS  (0) - HIE  (0)  
+HIS  (0) - HID  (0)  
+HIS  (0) - HIP (+1)    
+```
 
+### Selecting protonation states with check_structure.
+Let's change ASP20 and ASP26 in the file 1ert.pdb to the neutral form ASH. 
 ~~~
-cd  ~/workshop/pdb/1ERT
-ml StdEnv/2020 gcc/9.3.0 cuda/11.4 ambertools/22
-tleap -f leaprc.protein.ff19SB
+cd ~/scratch/workshop_amber/example_02
+check_structure -i 1ert.pdb -o 1ert_protonated.pdb \
+command_list --list "\
+add_hydrogen --list A:asp20ash,A:asp26ash --add_mode list;\
+water --remove yes"
 ~~~
 {: .language-bash}
-
-~~~
-s = loadpdb protein.pdb
-set {s.20 s.26} name "ASH"
-savepdb s protonated.pdb
-quit
-~~~
-{: .leap}
 
 You can verify that residues are changed by grepping ASH.
 
-### Selecting protonation states with *VMD*.
+>## Selecting protonation states with *VMD*.
+>
+>Change ASP20 and ASP26 in the file 1ert.pdb to the neutral form ASH and remove water.
+>>## Solution
+>>~~~
+>>ml StdEnv/2023 vmd
+>>vmd
+>>~~~
+>>{: .language-bash}
+>>
+>>~~~
+>>mol new 1ert.pdb
+>>set s [atomselect top "resid 20 26"]
+>>$s set resname ASH
+>>set s [atomselect top "protein"]
+>>$s writepdb 1ert_protonated.pdb
+>>quit
+>>~~~
+>>{: .vmd}
+>{: .solution}
+{: .challenge}
 
-~~~
-ml StdEnv/2020 vmd
-vmd
-~~~
-{: .language-bash}
+### Assigning protonation states with the *GROMACS pdb2gmx* module
+Protonation states can be assigned using the *GROMACS pdb2gmx* program. By default, *pdb2gmx* will select charged forms of LYS, ASP, or GLU. For HIS, it will try to place the proton on either ND1 or NE2 based on an optimal hydrogen bonding conformation. You can override the default behavior and select protonation manually using options  -lys, -asp, -glu, -his.
+{: .instructor_notes}
 
-~~~
-mol new protein.pdb
-set s [atomselect top "resid 20 26"]
-$s set resname ASH
-set s [atomselect top all]
-$s writepdb protonated.pdb
-quit
-~~~
-{: .vmd}
+- By default, *pdb2gmx* will select charged forms of LYS, ASP, or GLU
+- For HIS, it will try to place the proton optimally
+
+Downsides:
+- Interactive 
+- Residue names are changed only in the topology
+{: .self_study_text}
+
+The downside of this method is that it can not be scripted. The manual selection is cumbersome because *pdb2gmx* will be prompting to select the protonation state for each of the residues in a PDB file. Besides, *pdb2gmx* changes residue names only in the output topology file. Residue names are left unchanged in the output .pdb and .gro files.  
+{: .instructor_notes}
 
 
 ### Limitations of Fixed Protonation State Simulations
 
-{: .instructor_notes} 
 The use of constant protonation states in molecular dynamics simulations has its disadvantages. When conformational changes occur in natural systems, protonation patterns often change as well. In molecular dynamics simulations with fixed states, these processes are not coupled, making it difficult to fully understand proton-coupled conformational dynamics. Consider using constant pH simulations if proton-coupled dynamics are essential to your research. MD with constant pH is currently implemented in both AMBER and NAMD. At the moment, it is not officially implemented in *GROMACS*, but a modified version is available [[6](https://pubs.acs.org/doi/10.1021/ct200061r)].
 {: .instructor_notes} 
 
@@ -129,6 +166,26 @@ The use of constant protonation states in molecular dynamics simulations has its
 - Difficult to understand proton-coupled conformational dynamics.
 - Consider using constant pH simulations if proton-coupled dynamics are essential to your research.
 {: .self_study_text} 
+
+### Combining all structure preparation steps in one check_structure script
+~~~
+check_structure -i 1rgg.pdb -o 1RGG_chain_A_prot.pdb \
+command_list --list "\
+chains --select A;\
+add_hydrogen --list A:his53hip,A:asp79ash --add_mode list;\
+altloc --select A5:B,A54:B,A6:A,A13:A,A42:A,A85:A,A91:A;\
+getss --mark all;\
+ligands --remove all;\
+water --remove yes"
+~~~
+{: .language-bash}
+
+You can also save commands in a file and pass it as an argument to "command_list --list":
+
+~~~
+check_structure -i 1rgg.pdb -o 1RGG_chain_A_prot.pdb command_list --list prep_1rgg.chk
+~~~
+{: .language-bash}
 
 #### References
 
@@ -148,13 +205,13 @@ The use of constant protonation states in molecular dynamics simulations has its
 >
 >>## Solution
 >>~~~
->> cd ~/workshop/pdb/1RGG
+>> cd ~/scratch/workshop_amber/example_03
 >>~~~
 >>{: .language-bash}
 >> Save the following commands in a file,  e.g. prep_1RGG.vmd
 >> ~~~
->># Load 1RGG.pdb into a new (top) molecule
->>mol pdbload 1RGG
+>># Load 1rgg.pdb into a new (top) molecule
+>>mol pdbload 1rgg
 >># Select and save all chain A protein atoms
 >>set s [atomselect top "protein and chain A"]
 >>$s writepdb 1RGG_chain_A.pdb
@@ -186,3 +243,5 @@ The use of constant protonation states in molecular dynamics simulations has its
 >>{: .language-bash}
 > {: .solution}
 {: .challenge}
+
+

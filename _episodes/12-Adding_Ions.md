@@ -33,7 +33,6 @@ Adding more ions to a neutralized system will be necessary to represent physiolo
 
 ### Caveats and limitations of the random ion placement
 
-{: .instructor_notes} 
 Random placement of ions will generate a system in the completely dissociated, energetically unfavorable state. The random placement of ions is problematic if the electric charge of the macromolecule is big (for example DNA) because ions tend to form screening clouds around charged molecules rather than being distributed randomly. Random placement of ions will negatively impact the time required for the system equilibration and may affect structural stability of a macromolecule. A better approach is to place ions according to the electrostatic potential of the macromolecule. Such method is implemented in the *leap* module of the *AmberTools*. The *addions* command adds ions to simulation cells near the minima of the solute's electrostatic potential field.
 {: .instructor_notes} 
 
@@ -45,8 +44,8 @@ Random placement of ions will generate a system in the completely dissociated, e
 Let's neutralize 1RGG protein using the *leap* module. We will add ions prior to solvation so that the potential from un-equilibrated water will not interfere with ion placement:
 
 ~~~
-cd ~/workshop/pdb/1RGG/AMBER
-module load gcc/9.3.0 cuda/11.4 ambertools/22
+cd ~/scratch/workshop_amber/example_04
+module load gcc/12.3 openmpi/4.1.5 cuda/12.2 amber
 tleap
 ~~~
 {: .language-bash}
@@ -173,8 +172,6 @@ The process of molecular dynamics system setup can be automated by saving the wh
 You can download an example shell script that performs all preparation steps [here]({{ page.root }}/code/run_setup.sh). The script downloads the molecular structure file from PDB and generates input files for simulation with AMBER, NAMD, and GROMACS.
 
 ### How to create ligand topology
-
-[Automated Topology Builder](https://atb.uq.edu.au/index.py)
-
+Chemical compound topologies can be generated using [acpype](https://acpype.readthedocs.io/en/latest/), a Python module based on antechamber.
 
 
