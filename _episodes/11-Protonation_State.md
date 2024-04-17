@@ -95,7 +95,7 @@ What protonation states are appropriate for simulating Asp79 and His53 at pH 6?
 A more consistent and convenient way to select the desired form of amino acid is to change its name in the structure file before generating a topology. The neutral states of LYS, ASP, and GLU can be chosen by renaming them  LYN, ASH, and GLH, respectively.  You can select the appropriate form of HIS by renaming HIS to HIE (proton on NE2), HID (proton on ND1), or HIP (both protons).
 {: .instructor_notes}
 
-- Change residue name in the structure file
+-  To change the form of an amino acid, change its name in the structure file
 
 ```
 LYS (+1) - LYN  (0)  
@@ -169,6 +169,7 @@ The use of constant protonation states in molecular dynamics simulations has its
 
 ### Combining all structure preparation steps in one check_structure script
 ~~~
+cd ~/scratch/workshop_amber/example_03
 check_structure -i 1rgg.pdb -o 1RGG_chain_A_prot.pdb \
 command_list --list "\
 chains --select A;\

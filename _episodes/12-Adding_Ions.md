@@ -45,7 +45,7 @@ Let's neutralize 1RGG protein using the *leap* module. We will add ions prior to
 
 ~~~
 cd ~/scratch/workshop_amber/example_04
-module load gcc/12.3 openmpi/4.1.5 cuda/12.2 amber
+module load StdEnv/2023 amber
 tleap
 ~~~
 {: .language-bash}

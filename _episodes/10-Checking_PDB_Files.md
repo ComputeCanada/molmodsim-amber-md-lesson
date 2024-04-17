@@ -88,6 +88,12 @@ Let's consider some example protein PDB files. The first step is to connect to t
 - **no GPUs**
 <br>
 
+#### Workshop data: 
+
+/project/def-sponsor00/workshop_amber_2024.tar.gz  
+
+wget https://github.com/ComputeCanada/molmodsim-amber-md-lesson/releases/download/workshop-2021-04/workshop_amber_2024.tar.gz
+
 ### Checking a molecular structure 
 [Check_structure](https://pypi.org/project/biobb-structure-checking/) is a command-line utility from [BioBB project](https://github.com/bioexcel/biobb) for exhaustive structure quality checking (residue chirality, amide orientation, vdw clashes, etc.).  Using this utility, you can perform manipulations with structures, such as selecting chains or conformations, removing components, mutating residues, adding missing atoms, adding hydrogens, etc. 
 {: .instructor_notes}  
@@ -161,7 +167,7 @@ check_structure -i 2qwo.pdb -o protein.pdb ligands --remove all
 >>quit
 >>~~~
 >>{: .vmd}
->>The first line of code loads a new molecule from 1ERT.pdb. Using the **atomselect** method, we then select all protein atoms from the top molecule. Finally, we save the selection in the file "protein.pdb".  
+>>The first line of code loads a new molecule from 2qwo.pdb. Using the **atomselect** method, we then select all protein atoms from the top molecule. Finally, we save the selection in the file "protein.pdb".  
 >>The Atom Selection Language has many capabilities. You can learn more about it by visiting the following [webpage](https://www.ks.uiuc.edu/Research/vmd/vmd-1.3/ug/node132.html). 
 >>
 >{: .solution}
@@ -210,6 +216,7 @@ Check conformations
 cd ~/scratch/workshop_amber/example_02
 check_structure -i 1ert.pdb checkall
 ~~~
+{: .language-bash}
 
 ~~~
 ASP A20
@@ -231,6 +238,7 @@ Select conformers A ASP20 and B HIS43.
 ~~~
 check_structure -i 1ert.pdb -o output.pdb altloc --select A20:A,A43:B,A90:B 
 ~~~
+{: .language-bash}
 
 
 >## Selecting Alternate Conformations with VMD

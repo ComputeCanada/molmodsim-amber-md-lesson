@@ -4,7 +4,7 @@
 mkdir amber
 cd amber
 module purge
-module load nixpkgs/16.09  intel/2016.4 vmd/1.9.3
+module load StdEnv/2023 vmd
 # Save VMD commands in the variable 'script'
 script="$(cat << EOF
 # Load 1RGG.pdb into a new (top) molecule
@@ -37,7 +37,7 @@ vmd -e <<<"${script}" /dev/stdin
 
 # >>>>>  Prepare the system using LEaP + pbd2gmx <<<<<
 module purge
-module load nixpkgs/16.09  gcc/5.4.0  openmpi/2.1.1 amber/18
+module load StdEnv/2023 amber
 # Save LeaP commands in the variable 'script'
 script="$(cat << EOF
 # Load spce water model
@@ -68,7 +68,7 @@ mkdir gromacs_A
 cp amber/1RGG_chain_A_solvated.pdb gromacs_A
 cd gromacs_A
 module purge
-module load gcc/7.3.0 openmpi/3.1.2 gromacs/2019.3
+module load StdEnv/2023 gromacs
 # Rename ions for GROMACS and assign them to chain B
 sed s/"Cl-  Cl-  "/" CL  CL  B"/g 1RGG_chain_A_solvated.pdb | sed s/"Na+  Na+  "/" NA  NA  B"/g > 1RGG_chain_A_solvated_gro.pdb
 # Save GROMACS topology and coordinate files
@@ -82,7 +82,7 @@ mkdir gromacs_B
 cp amber/1RGG_chain_A_prot.pdb gromacs_B
 cd gromacs_B
 module purge
-module load gcc/7.3.0 openmpi/3.1.2 gromacs/2019.3
+module load StdEnv/2023 gromacs
 # Generate GROMACS topology and coordinate files
 gmx pdb2gmx -f 1RGG_chain_A_prot.pdb -ff amber99sb-ildn -water spce -ignh -chainsep id -ss << EOF >log
 y

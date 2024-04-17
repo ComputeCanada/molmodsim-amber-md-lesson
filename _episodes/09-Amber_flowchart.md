@@ -68,7 +68,7 @@ AMBER package includes two utilities for simulation preparation: tLEaP and xLEaP
 A package of AMBER includes two MD engines: SANDER and PMEMD. Serial and parallel versions are available for both programs. AMBER also provides a GPU-accelerated version of PMEMD. Along with the topology file and the coordinate or resume file, you will also need an input file describing the parameters of your simulation, such as integrator, thermostat, barostat, time step, cut-off distance, etc. It's also possible to use bond and distance constraints derived from NMR experiments. PMEMD and SANDER can run multiple simulations, including replica exchange and constant pH. Parameters for such simulations are contained in a special groupfile. A simulation program will save energy components and MD trajectories. 
 {: .instructor_notes}
 
-PMEMD is faster than SANDER, but there are limitations to the simulation types available in PMEND. Some algorithms (such as DFT QM-MM with GPU-accelerated DFT code QUICK) are only available in SANDER.
+PMEMD is faster than SANDER, but there are limitations to the simulation types available in PMEMD. Some algorithms (such as DFT QM-MM with GPU-accelerated DFT code QUICK) are only available in SANDER.
 {: .instructor_notes}
 
 
