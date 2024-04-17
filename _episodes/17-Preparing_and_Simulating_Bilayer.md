@@ -324,7 +324,8 @@ pmemd.cuda -O -i equilibration-2.in \
 ~~~
 {: .language-bash}
 
-
+Center trajectory using the bilayer COM
+~~~
 trajin ../bilayer.rst7
 trajin ../2-heating/heated.rst7
 trajin ../4-equilibration/eq-4.rst7
@@ -333,8 +334,7 @@ image
 trajout mdcrd.xtc 
 go
 quit
-
-
+~~~
 
 
 > ## Delete TER records between residues SPM and SA in bilayer_only_lipid.pdb using shell commands.
