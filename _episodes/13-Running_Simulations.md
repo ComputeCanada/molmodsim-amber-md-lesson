@@ -19,47 +19,49 @@ Amber package includes two MD engines: SANDER and PMEMD. Both programs are avail
 
 
 #### SANDER
-
-{: .instructor_notes} 
-SANDER is a free simulation engine distributed with the AmberTools package. For parallel distributed simulations, it uses the MPI (message passing interface). The parallel version of Sander implements replicated data structure. Each CPU computes a portion of the potential energy and corresponding gradients for a set of atoms assigned to it.  A global part of the code then sums the force vector and sends the result to each CPU. The processors then perform a molecular dynamics update step for the assigned atoms and communicate the updated positions to all CPUs in preparation for the subsequent molecular dynamics step.
+SANDER is a free simulation engine distributed with the AmberTools package. For parallel distributed simulations, it uses the MPI (message passing interface). The parallel version of Sander implements replicated data structure. 
 {: .instructor_notes} 
 
+Each CPU computes a portion of the potential energy and corresponding gradients for a set of atoms assigned to it.  A global part of the code then sums the force vector and sends the result to each CPU. The processors then perform a molecular dynamics update step for the assigned atoms and communicate the updated positions to all CPUs in preparation for the subsequent molecular dynamics step.
 {: .instructor_notes} 
+
 This model provides a convenient programming environment, but the main problem is that the communication required at each step grows with the number of processors limiting parallel scaling. 
 {: .instructor_notes} 
 
-{: .self_study_text} 
-SANDER is a free simulation engine distributed with the AmberTools package.
+- SANDER is a free simulation engine distributed with the AmberTools package.
 {: .self_study_text} 
 
 
 #### PMEMD
-
-{: .instructor_notes} 
 PMEMD is an extensively revised version of SANDER available only in the commercial AMBER package. Developers made many optimizations to improve both single-processor performance and parallel scaling. To avoid data transfer bottleneck, PMEMD communicates to each processor only the coordinate information necessary for computing the pieces of the potential energy assigned to it. This code, however, does not support all of the options found in the SANDER.  
 {: .instructor_notes} 
 
-{: .self_study_text} 
 - PMEMD is an extensively revised version of SANDER available only in the commercial AMBER package.
 {: .self_study_text} 
 
 
 #### GPU-Accelerated PMEMD
-GPU - accelerated PMEMD version of PMEMD (pmemd.cuda) leverages NVIDIA GPUs to perform MD simulations.  It is significantly faster than the CPU version achieving high simulation speed by executing all calculations on a single GPU within its memory. This approach eliminates the bottleneck of moving data between CPU and GPU and allows very efficient GPU usage.  
+GPU - accelerated PMEMD version of PMEMD (pmemd.cuda) uses NVIDIA GPUs to perform MD simulations.  It is significantly faster than the CPU version achieving high simulation speed by executing all calculations on a single GPU within its memory. This approach eliminates the bottleneck of moving data between CPU and GPU and allows very efficient GPU usage.  
+{: .instructor_notes} 
+
+- GPU - accelerated PMEMD version of PMEMD (pmemd.cuda) uses NVIDIA GPUs.
+{: .self_study_text} 
 
 **<font color="red">Modern GPUs are so fast that communication overhead between GPUs does not allow for efficient parallel scaling of an MD simulation to two or more GPUs.</font>**
 
-{: .instructor_notes} 
 While you can run a single simulation on several GPUs using the parallel PMEMD GPU version (pmemd.cuda.MPI) it will run not run much faster than on a single GPU. Parallel GPU version is useful only for specific simulations such as thermodynamic integration and replica-exchange MD. These types of jobs involve several completely independent simulations that can be executed concurrently on different GPUs. PMEMD allows running multiple copies of simulations within a single parallel run via the multi-pmemd mechanism described below. 
 {: .instructor_notes} 
-
 
 [PMEMD parallel scaling, A100](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=PMEMD.cuda.MPI&software_id=&module_contains=&module_version=&site_contains=Narval&gpu_model=&cpu_model=&arch=&dataset=6n4o)  
 [PMEMD parallel scaling, P100](https://mdbench.ace-net.ca/mdbench/bform/?software_contains=PMEMD.cuda.MPI&software_id=&module_contains=&module_version=&site_contains=Cedar&gpu_model=P100-PCIE&cpu_model=&arch=&dataset=6n4o)
 
 #### Multi-sander and multi-pmemd simulations
 Multi-sander and multi-pmemd are wrappers around parallel versions of these programs. These wrappers are invoked by preparing special input files. The wrappers allow running multiple copies of simulations within a single parallel job. The multi-sander and multi-pmemd mechanisms are also utilized for methods requiring multiple simulations to communicate with one another, such as thermodynamic integration and replica exchange molecular dynamics.
+{: .instructor_notes} 
 
+- Invoked by special commands in MD input files.
+- Used for methods requiring multiple simulations to communicate with one another, such as thermodynamic integration and replica exchange.
+{: .self_study_text} 
 
 <br>
 #### Summary of available AMBER MD executables: 
@@ -79,23 +81,27 @@ Multi-sander and multi-pmemd are wrappers around parallel versions of these prog
 ### Energy minimization.
 Before simulating a system we need to relax it. Any atomic clashes must be resolved, and potential energy minimized to avoid unphysically large forces that can crash a simulation. 
 
-{: .instructor_notes} 
 The general minimization strategy is first to restrict all solute atoms with the experimental coordinates and relax all atoms that were added. (solvent, ions and missing fragments). This will help to stabilize the native conformation. There are no strict rules defining how many minimization steps are necessary. The choice will depend on the composition of a simulation system. For a big systems with a large amount of missing residues it is safer to carry out several minimization steps gradually releasing restraints. For example, you can first relax only solvent and ions, then lipid bilayer (if this is a membrane protein), then added fragments, then the original protein side-chains. Having more steps may be unnecessary, but it will not cause any problems. 
 {: .instructor_notes} 
 
-{: .self_study_text} 
 - It is safer to start minimization with restrained macromolecules and gradually release restraints in several minimization steps.
 {: .self_study_text} 
 
 For example, we could do a two stage minimization. In the first stage we restrain all original atoms. In the second stage we restrain only the original backbone atoms. Our example protein is very small and we have limited time, so we skip the first step and restrain only protein backbone.
+{: .instructor_notes} 
 
 ~~~
-cd ~/workshop/pdb/1RGG/AMBER/1_minimization
+cd ~/scratch/workshop_amber/example_04/1_minimization
 ~~~
 {: .language-bash}
 
 MD programs can do a lot of different things, and every type of calculation has a number of parameters that allow us to control what will be done. To run a minimization we need to make an input file describing exactly what we want to do and how we want to do it:
+{: .instructor_notes} 
 
+Input file for minimization describes what we want to do and how.
+{: .self_study_text} 
+
+In the input file we:
 - instruct a simulation program to minimize energy  
 - choose a method of minimization  
 - specify the maximum number of cycles of minimization  
@@ -146,8 +152,12 @@ Submission script *submit.sh*:
 #!/bin/bash
 #SBATCH --mem-per-cpu=1000 --time=3:0:0 --ntasks=4
 ml --force purge
-ml StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 amber/20.9-20.15
-srun pmemd.MPI -O -i min.in -p prmtop -c inpcrd -ref inpcrd -r minimized.nc -o mdout
+ml StdEnv/2023 amber/22
+srun pmemd.MPI -O -i min.in \
+-p ../1RGG_chain_A.parm7 \
+-c ../1RGG_chain_A.rst7 \
+-ref ../1RGG_chain_A.rst7 \
+-r minimized.nc -o mdout
 ~~~
 {: .file-content}
 
@@ -160,11 +170,11 @@ If minimization is successful we expect to see large negative energies.
 
 ### Heating
 ~~~
-cd ~/workshop/pdb/1RGG/AMBER/2_heating
+cd ~/scratch/workshop_amber/example_04/2_heating
 ~~~
 {: .language-bash}
 
-#### Molecular dynamics parameters
+#### Molecular dynamics parameters  
 
 Flag        | Value  | Description
 -------------|--------|-----------
@@ -205,22 +215,26 @@ END
 #### Heating submission script:
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=4000 --time=3:0:0 --ntasks=4
+#SBATCH --mem-per-cpu=1000 --time=3:0:0 --ntasks=4
 ml --force purge
-ml StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 amber/20.9-20.15
-srun pmemd.MPI -O -i heat.in -p prmtop -c minimized.nc -ref inpcrd -r heated.nc -o mdout
+ml StdEnv/2023 amber/22
+srun pmemd.MPI -O -i heat.in \
+-p ../1RGG_chain_A.parm7 \
+-c ../1_minimization/minimized.nc \
+-ref ../1RGG_chain_A.rst7 \
+-r heated.nc -o mdout
 ~~~
 {: .language-bash}
 
 This job runs about 2 min on 4 CPUs.
 
 ### Equilibration
-#### Constrained equilibration
 ~~~
-cd ~/workshop/pdb/1RGG/AMBER/3_equilibration
+cd ~/scratch/workshop_amber/example_04/3_equilibration
 ~~~
 {: .language-bash}
 
+#### Constrained equilibration
 - Turn on restart flag.
 
 Flag         | Value  | Description
@@ -251,22 +265,30 @@ Submission script for CPU-only job *submit_1.sh*:
 #!/bin/bash
 #SBATCH --mem-per-cpu=4000 --time=3:0:0 --ntasks=4
 module --force purge
-ml StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 amber/20.9-20.15
+ml StdEnv/2023 amber/22
 srun pmemd.MPI -O -i equilibrate_1.in -p prmtop -c heated.nc -ref inpcrd -r equilibrated_1.nc -o equilibration_1.log
 ~~~
 {: .language-bash}
 
-Submission script for GPU job *submit_1.sh*:
+This run takes about 3 minutes on 4 CPUs.
+
+Submission script for GPU job *submit_1_cuda.sh*:
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=4000 --time=3:0:0 --ntasks=1 --gres=gpu:v100:1 --partition=all_gpus
+#SBATCH --mem-per-cpu=1000 --time=3:0:0 --ntasks=1 --gpus-per-node=1
 ml --force purge
-ml StdEnv/2020 gcc/9.3.0 cuda/11.0 openmpi/4.0.3 amber/20.9-20.15
-pmemd.cuda -O -i equilibrate_1.in -p prmtop -c heated.nc -ref inpcrd -r equilibrated_1.nc -o equilibration_1.log
+# cuda/12.2 is incompatible with the current vGPU driver
+ml arch/avx2 StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15 
+pmemd.cuda -O -i equilibrate_1.in \
+-p ../1RGG_chain_A.parm7 \
+-c ../2_heating/heated.nc \
+-ref ../1RGG_chain_A.rst7 \
+-r equilibrated_1.nc \
+-o equilibration_1.out
 ~~~
 {: .language-bash}
 
-This job runs about 3 min on 4 CPUs.
+This job runs about 30 sec on 1 vGPU.
 
 #### Unconstrained equilibration
 
@@ -282,7 +304,7 @@ ntt=3,temp0=300,gamma_ln=1.0,      ! Langevin thermostat, collision frequency
 ntp=1,barostat=1,pres0=1,taup=1.0, ! Berendsen barostat
 ntpr=100,                          ! Print energies every ntpr steps   
 ntwx=1000,                         ! Save coordinates every ntwx steps
-nstlim=10000000,                   ! Simulate nstlim steps
+nstlim=1000000,                    ! Simulate nstlim steps
 &end
 END
 ~~~
@@ -291,13 +313,19 @@ END
 Submission script *submit_2.sh*
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=4000 --time=3:0:0 --ntasks=1 --gres=gpu:v100:1 --partition=all_gpus
+#SBATCH --mem-per-cpu=1000 --time=3:0:0 --ntasks=1 --gpus-per-node=1
 ml --force purge
-ml StdEnv/2020 gcc/9.3.0 cuda/11.0 openmpi/4.0.3 amber/20.9-20.15
-
-pmemd.cuda -O  -i equilibrate_2.in -p prmtop -c equilibrated_1.nc  -r equilibrated_2.nc -o equilibration_2.log
+ml arch/avx2 StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15 
+pmemd.cuda -O -i equilibrate_2.in \
+-p ../1RGG_chain_A.parm7 \
+-c equilibrated_1.nc \
+-r equilibrated_2.nc \
+-x mdcrd_2.nc \
+-o equilibration_2.out
 ~~~
 {: .language-bash}
+
+This job runs about 10 min on 1 vGPU.
 
 #### References
 1. [An overview of the Amber biomolecular simulation package](https://wires.onlinelibrary.wiley.com/doi/10.1002/wcms.1121)
@@ -305,24 +333,13 @@ pmemd.cuda -O  -i equilibrate_2.in -p prmtop -c equilibrated_1.nc  -r equilibrat
 3. [Routine Microsecond Molecular Dynamics Simulations with AMBER on GPUs. 1. Generalized Born](https://pubmed.ncbi.nlm.nih.gov/22582031/)
 4. [Routine Microsecond Molecular Dynamics Simulations with AMBER on GPUs. 2. Explicit Solvent Particle Mesh Ewald](https://pubmed.ncbi.nlm.nih.gov/26592383/)
 
-
-### Simulation with NAMD
-Because NAMD natively supports AMBER topology files, simulating a system prepared with AMBER tools requires only NAMD simulation input files and NAMD - compatible coordinate files such as pdb or NAMD binary coordinates.
-
-In the worksop data, you will find example simulation input files for minimization, heating and equilibration:
-~~~
-ls ~/workshop/pdb/6N4O/simulation/sim_namd
-1-minimization  2-heating  3-equilibration  4-production
-~~~
-{: .language-bash}
-
 ### Analyzing simulation logs
 #### Extract selected energy components from MD log and save in a table using *cpptraj*.
 
-Use the script `~/bin/extract_energies.sh`:
+Use the script `~/scratch/workshop_amber/scripts/extract_energies.sh`:
 ~~~
 mkdir ~/bin
-nano ~/bin/extract_energies.sh
+cp ~/scratch/workshop_amber/scripts/* ~/bin
 ~~~
 {: .language-bash}
 
@@ -341,10 +358,10 @@ EOF
 
 Extract selected energy components. 
 ~~~
-cd ~/workshop/pdb/1RGG/AMBER/3_equilibration/
+cd ~/scratch/workshop_amber/example_04/3_equilibration
 ml purge
-ml StdEnv/2020 gcc/9.3.0 cuda/11.4 ambertools/22
-bash extract_energies.sh equilibration_2.log
+ml StdEnv/2023 amber
+~/bin/extract_energies.sh equilibration_2.log
 ~~~
 {: .language-bash}
 
@@ -353,25 +370,21 @@ bash extract_energies.sh equilibration_2.log
 
 #### Plot energy components with python
 
-Get interactive allocation and start vncserver. Connect VNC viewer to the node running vncserver.
-
-On the compute node load python and scipy-stack modules:
+Go to Jupyter desktop
 ~~~
-cd ~/workshop/pdb/1RGG/AMBER/3_equilibration
-ml StdEnv/2020 python scipy-stack
-python
+cd ~/scratch/workshop_amber/example_04/3_equilibration
+ml purge
+ml StdEnv/2023 amber
 ~~~
 {: .language-bash}
 
 Read table from the file `energies.dat` into pandas dataframe and plot it:
-
 ~~~
 python ~/bin/plot_energies.py
 ~~~
 {: .language-bash}
 
 File `plot_energies.py`:
-
 ~~~
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -390,14 +403,14 @@ plt.savefig('energies.png')
 You can remove from a trajectory all components that are not essential for analysis, for example water and ions. The following command will remove everything except residues from 1 to 96 and save every second frame.
 ~~~
 cpptraj<<EOF
-parm prmtop
+parm ../1RGG_chain_A.parm7
 trajin mdcrd.nc 1 last 2
 strip !(:1-96)
 trajout mdcrd_nowat.nc 
 run
 EOF
 cpptraj<<EOF
-parm prmtop
+parm ../1RGG_chain_A.parm7
 parmstrip !(:1-96)
 parmwrite out prmtop_nowat.parm7
 run
@@ -408,7 +421,6 @@ EOF
 ## Transferring equilibrated system between simulation packages.
 Simulation packages have different methods and performance. It is useful to be able to transfer a running simulation from one software to another. 
 
-{: .instructor_notes} 
 Imagine that you started your project with GROMACS, but later realized that you need to run a constant pH simulation. You need to switch to AMBER. Want to study conformational transitions? Gaussian accelerated MD is not available in GROMACS. Another reason to move to AMBER/NAMD. Want to apply custom forces? It is easy to with Tcl scripting in NAMD.
 {: .instructor_notes} 
 
@@ -416,17 +428,17 @@ Imagine that you started your project with GROMACS, but later realized that you 
 To transfer simulation to GROMACS we need to convert topology and restart files.
 
 ~~~
-cd ~/workshop/pdb/1RGG/AMBER_to_GROMACS
+cd ~/scratch/workshop_amber/pdb/1RGG/AMBER_to_GROMACS
 ~~~
 {: .language-bash}
 
 #### Convert AMBER topology to GROMACS
 ~~~
-module --force purge
-module load StdEnv/2020 gcc/9.3.0 cuda/11.0 openmpi/4.0.3 
-module load amber/20.9-20.15 gromacs/2021.2 scipy-stack python
+module purge
+module load StdEnv/2023 amber gromacs
 ~~~
 {: .language-bash}
+
 ~~~
 import parmed as pmd
 amber = pmd.load_file("prmtop.parm7", "inpcrd.rst7")
@@ -483,10 +495,22 @@ amber.save("restart.gro")
 {: .language-python}
 
 #### Create portable binary restart (topol.tpr) file
+This step is not needed start from heating (if you don't need velocities).
 ~~~
 gmx grompp -p topol.top -c restart.gro -f gromacs_production.mdp
 ~~~
 {: .language-bash}
 
 The workshop data contains an example gromacs_production.mdp in the directory
-workshop/pdb/1RGG/AMBER_to_GROMACS.
+`workshop_amber/pdb/1RGG/AMBER_to_GROMACS`.
+
+### Simulation with NAMD
+Because NAMD natively supports AMBER topology files, simulating a system prepared with AMBER tools requires only NAMD simulation input files and NAMD - compatible coordinate files such as pdb or NAMD binary coordinates.
+
+In the worksop data, you will find example simulation input files for minimization, heating and equilibration:
+~~~
+ls ~/scratch/workshop_amber/namd/sim_namd
+1-minimization  2-heating  3-equilibration  4-production
+~~~
+{: .language-bash}
+
