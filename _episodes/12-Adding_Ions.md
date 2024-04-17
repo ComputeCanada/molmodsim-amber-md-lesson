@@ -20,8 +20,14 @@ keypoints:
 ### Why ions are added to simulations?
 
 When periodic boundary conditions are applied and grid-based methods are used to compute the Coulomb energy, the simulation box interacts with the infinite number of its periodic images. As a result, if a simulation system is charged, the electrostatic energy will essentially add to infinity. To solve this issue, we need to add counter-ions to neutralize the system so that the electrostatic energy can be correctly calculated during simulation.
+{: .instructor_notes} 
 
 Another reason is that the conformations, dynamics, and functions of biological macromolecules are influenced by ion concentration and composition of the local environment.
+{: .instructor_notes} 
+
+- To calculate correctly electrostatic energy with periodic boundary conditions 
+- Ions concentration and composition affect conformations, dynamics, and functions of biological macromolecules.
+{: .self_study_text}
 
 ## Neutralizing a system
 
