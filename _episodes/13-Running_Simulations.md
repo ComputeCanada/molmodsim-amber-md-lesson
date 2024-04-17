@@ -464,7 +464,7 @@ EOF
 ~~~
 {: .language-bash}
 
-Add definitions of the position restraints to the topology "gromacs.top". Use a text editor of your choice to insert the following lines at the end of the "system" molecule block:
+Add definitions of the position restraints to the topology "topol.top". Use a text editor of your choice to insert the following lines at the end of the "system" molecule block:
 ~~~
 #ifdef POSRES
 #include "backbone.itp"
@@ -472,7 +472,6 @@ Add definitions of the position restraints to the topology "gromacs.top". Use a 
 
 [ moleculetype ]
 ; Name            nrexcl
-Na+          3
 ~~~
 {: .file-content}
 
@@ -495,9 +494,12 @@ amber.save("restart.gro")
 {: .language-python}
 
 #### Create portable binary restart (topol.tpr) file
-This step is not needed start from heating (if you don't need velocities).
+
 ~~~
-gmx grompp -p topol.top -c restart.gro -f gromacs_production.mdp
+module purge
+# gromacs modules from StdEnv/2023 fail
+ml StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 gromacs/2022.3
+gmx grompp -p topol.top -c restart.gro -f gromacs_production.mdp -maxwarn 2
 ~~~
 {: .language-bash}
 

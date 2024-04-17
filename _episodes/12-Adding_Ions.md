@@ -168,10 +168,6 @@ The process of molecular dynamics system setup can be automated by saving the wh
 - The process of molecular dynamics system setup can be automated by saving the whole sequence of commands into a text file.
 {: .self_study_text} 
 
-
 You can download an example shell script that performs all preparation steps [here]({{ page.root }}/code/run_setup.sh). The script downloads the molecular structure file from PDB and generates input files for simulation with AMBER, NAMD, and GROMACS.
-
-### How to create ligand topology
-Chemical compound topologies can be generated using [acpype](https://acpype.readthedocs.io/en/latest/), a Python module based on antechamber.
 
 
