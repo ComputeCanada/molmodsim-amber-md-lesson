@@ -25,7 +25,10 @@ gmx convert-tpr -s topol.tpr -nsteps 10000 -o next.tpr
 
 #### Submission script for a CPU simulation
 ~~~
-#SBATCH --mem-per-cpu=4000 --time=10:0:0 -c4 --ntasks=2
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=10:00:00
+#SBATCH --ntasks=2
+#SBATCH --cpus-per-task=4
 
 module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 gromacs/2023.2
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-1}"
@@ -39,21 +42,27 @@ srun gmx mdrun -s next.tpr -cpi state.cpt
 #### Submission script for a single GPU simulation 
 ~~~
 #!/bin/bash
-#SBATCH  --mem-per-cpu 2000 --time 1:0:0   
-#SBATCH -c 12 --gpus-per-node 1  
+#SBATCH --mem-per-cpu=2000M
+#SBATCH --time=1:00:00   
+#SBATCH --cpus-per-task=12
+#SBATCH --gpus-per-node=1  
 
 module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 gromacs/2023.2
 
 gmx mdrun -ntomp ${SLURM_CPUS_PER_TASK:-1} \
--nb gpu -pme gpu -update gpu -bonded cpu -s topol.tpr
+    -nb gpu -pme gpu -update gpu -bonded cpu -s topol.tpr
 ~~~
 {: .file-content}
 
 #### Submission script for a multiple GPU simulation 
 ~~~
 #!/bin/bash
-#SBATCH  --mem-per-cpu 2000 --time 1:0:0   
-#SBATCH  --nodes 1 --ntasks 2 -c 12 --gpus-per-task 1  
+#SBATCH --mem-per-cpu=2000M
+#SBATCH --time=1:00:00   
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=2
+#SBATCH --cpus-per-task=12
+#SBATCH --gpus-per-task=1
 
 module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 gromacs/2023.2
 
@@ -68,10 +77,13 @@ srun gmx mdrun -ntomp ${SLURM_CPUS_PER_TASK:-1} \
 #### Submission script for a single GPU simulation
 ~~~
 #!/bin/bash
-#SBATCH -c1 --gpus 1 --mem-per-cpu=2000  --time=1:0:0
+#SBATCH --cpus-per-task=1
+#SBATCH --gpus 1
+#SBATCH --mem-per-cpu=2000M
+#SBATCH --time=1:00:00
 
 module --force purge
-ml StdEnv/2020  gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15
+module load StdEnv/2020  gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15
 pmemd.cuda -O -i pmemd.in -o production.log -p prmtop.parm7 -c restart.rst7
 
 ~~~
@@ -82,14 +94,17 @@ Multiple GPU pmemd version is meant to be used only for AMBER methods running mu
 
 ~~~
 #!/bin/bash
-#SBATCH --nodes=1 --ntasks=2 --gpus-per-node=2
-#SBATCH --mem-per-cpu=2000 --time=1:0:0
+#SBATCH --nodes=1 
+#SBATCH --ntasks-per-node=2
+#SBATCH --gpus-per-node=2
+#SBATCH --mem-per-cpu=2000M
+#SBATCH --time=1:00:00
 
 module --force purge
-ml StdEnv/2020  gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15
+module load StdEnv/2020  gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15
 
 srun pmemd.cuda.MPI -O -i pmemd_prod.in -o production.log \
--p prmtop.parm7 -c restart.rst7
+        -p prmtop.parm7 -c restart.rst7
 ~~~
 {: .file-content}
 
@@ -99,8 +114,10 @@ srun pmemd.cuda.MPI -O -i pmemd_prod.in -o production.log \
 #### Submission script for a GPU simulation
 ~~~
 #!/bin/bash
-#SBATCH -c2 --gpus-per-node=a100:2  
-#SBATCH --mem-per-cpu=2000 --time=1:0:0
+#SBATCH --cpus-per-task=2
+#SBATCH --gpus-per-node=a100:2  
+#SBATCH --mem-per-cpu=2000M
+#SBATCH --time=1:00:00
 NAMDHOME=$HOME/NAMD_3.0b3_Linux-x86_64-multicore-CUDA
 
 $NAMDHOME/namd3 +p${SLURM_CPUS_PER_TASK} +idlepoll namd3_input.in  

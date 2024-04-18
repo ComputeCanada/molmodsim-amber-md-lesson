@@ -34,8 +34,8 @@ Using MC barostat with hard LJ cutoff is known to cause bilayer deformation. It 
 
 ~~~
 cd ~/scratch/workshop_amber/example_06
-ml purge
-ml StdEnv/2023 ambertools
+module purge
+module load StdEnv/2023 ambertools
 packmol-memgen --available_lipids 
 ~~~
 {: .language-bash}
@@ -44,7 +44,8 @@ packmol-memgen --available_lipids
 
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=2000 --time=3:0:0
+#SBATCH --mem-per-cpu=2000M
+#SBATCH --time=3:00:00
 
 module purge
 module load StdEnv/2023 ambertools/23
@@ -93,14 +94,15 @@ quit
 
  ~~~
  #!/bin/bash
- #SBATCH --mem-per-cpu=2000 --time=3:0:0
+ #SBATCH --mem-per-cpu=2000M
+ #SBATCH --time=3:00:00
  
  module purge
  module load StdEnv/2023 ambertools/23
  packmol-memgen \
-	--pdb 6U9P-clean.pdb \
-	--lipids DOPE:DOPG \
-	--ratio 3:1 \
+    --pdb 6U9P-clean.pdb \
+    --lipids DOPE:DOPG \
+    --ratio 3:1 \
     --preoriented \
     --parametrize 
  ~~~

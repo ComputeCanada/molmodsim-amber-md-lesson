@@ -162,8 +162,11 @@ mpiexec sander.MPI -O -i heat.in -p prmtop.parm7 -c minimized_2.nc -ref inpcrd.r
 
 Submit to the queue to run simulation with GPU accelerated pmemd.cuda.
 ~~~
-#SBATCH --mem-per-cpu=4000 --time=3:0:0 --gres=gpu:v100:1 --partition=all_gpus
-ml StdEnv/2020 gcc/8.4.0 cuda/10.2 openmpi/4.0.3 amber
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=3:00:00
+#SBATCH --gres=gpu:v100:1
+#SBATCH --partition=all_gpus
+module load StdEnv/2020 gcc/8.4.0 cuda/10.2 openmpi/4.0.3 amber
 pmemd.cuda -O -O -i heat.in -p prmtop.parm7 -c minimized_2.nc -ref inpcrd.rst7 -r heated.nc -o heating.log
 ~~~
 {: .language-bash}
@@ -246,8 +249,11 @@ Run for 10 ns
 
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=4000 --time=3:0:0 --gres=gpu:v100:1 --partition=all_gpus
-ml StdEnv/2020 gcc/8.4.0 cuda/10.2 openmpi/4.0.3 amber
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=3:00:00
+#SBATCH --gres=gpu:v100:1
+#SBATCH --partition=all_gpus
+module load StdEnv/2020 gcc/8.4.0 cuda/10.2 openmpi/4.0.3 amber
 
 pmemd.cuda -O -O -i md.in -p prmtop.parm7 -c equilibrated_2.nc -r rest.nc -o md.log
 ~~~
@@ -476,7 +482,9 @@ We converted NAMD restart files to AMBER restart and we can continue simulation 
 
 Submitting pmemd.cuda on Siku:
 ~~~
-#SBATCH --mem-per-cpu=4000 --time=3:0:0 --gres=gpu:v100:1 
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=3:00:00
+#SBATCH --gres=gpu:v100:1
 module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15
 
 pmemd.cuda -O -i pmemd_prod.in -o production.log -p ../../prmtop.parm7 -c restart.rst7
@@ -495,7 +503,7 @@ To transfer simulation to GROMACS in addition to converting restart file we need
 First convert AMBER topology to GROMACS
 ~~~
 module purge
-ml StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 ambertools/22
+module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 ambertools/22
 cd ~/scratch/workshop/pdb/6N4O/simulation/sim_gromacs/0-setup
 python
 ~~~
@@ -642,7 +650,9 @@ gmx grompp -p gromacs.top  -c restart.gro -t restart.trr -f gromacs_production.m
 Running simulation
 
 ~~~
-#SBATCH --mem-per-cpu=4000 --time=10:0:0 -c16
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=10:00:00
+#SBATCH --cpus-per-task=16
 module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 gromacs
 gmx mdrun -s input.tpr
 ~~~
