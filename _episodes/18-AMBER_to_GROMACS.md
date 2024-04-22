@@ -163,13 +163,15 @@ gen_vel                 = no
 ### Running GROMACS simulation
 ~~~
 #!/bin/bash
-#SBATCH  --mem-per-cpu 4000 --time 1:0:0   
-#SBATCH  -c10 --gpus-per-node=v100:1
-  
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=1:00:00
+#SBATCH --cpus-per-task=10
+#SBATCH --gpus-per-node=v100:1
+
 module load StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 gromacs/2023.2
 
 srun gmx mdrun -ntomp ${SLURM_CPUS_PER_TASK:-1} \
--nb gpu -pme gpu -update gpu -bonded cpu -s topol.tpr
+          -nb gpu -pme gpu -update gpu -bonded cpu -s topol.tpr
 ~~~
 {: .language-bash}
 

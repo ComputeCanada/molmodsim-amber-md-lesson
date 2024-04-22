@@ -150,14 +150,16 @@ END
 Submission script *submit.sh*:
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=1000 --time=3:0:0 --ntasks=4
-ml --force purge
-ml StdEnv/2023 amber/22
+#SBATCH --mem-per-cpu=1000M
+#SBATCH --time=3:00:00
+#SBATCH --ntasks=4
+module --force purge
+module load StdEnv/2023 amber/22
 srun pmemd.MPI -O -i min.in \
--p ../1RGG_chain_A.parm7 \
--c ../1RGG_chain_A.rst7 \
--ref ../1RGG_chain_A.rst7 \
--r minimized.nc -o mdout
+        -p ../1RGG_chain_A.parm7 \
+        -c ../1RGG_chain_A.rst7 \
+        -ref ../1RGG_chain_A.rst7 \
+        -r minimized.nc -o mdout
 ~~~
 {: .file-content}
 
@@ -215,14 +217,16 @@ END
 #### Heating submission script:
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=1000 --time=3:0:0 --ntasks=4
-ml --force purge
-ml StdEnv/2023 amber/22
+#SBATCH --mem-per-cpu=1000M
+#SBATCH --time=3:00:00
+#SBATCH --ntasks=4
+module --force purge
+module load StdEnv/2023 amber/22
 srun pmemd.MPI -O -i heat.in \
--p ../1RGG_chain_A.parm7 \
--c ../1_minimization/minimized.nc \
--ref ../1RGG_chain_A.rst7 \
--r heated.nc -o mdout
+        -p ../1RGG_chain_A.parm7 \
+        -c ../1_minimization/minimized.nc \
+        -ref ../1RGG_chain_A.rst7 \
+        -r heated.nc -o mdout
 ~~~
 {: .language-bash}
 
@@ -263,10 +267,17 @@ END
 Submission script for CPU-only job *submit_1.sh*:
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=4000 --time=3:0:0 --ntasks=4
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=3:00:00
+#SBATCH --ntasks=4
 module --force purge
-ml StdEnv/2023 amber/22
-srun pmemd.MPI -O -i equilibrate_1.in -p prmtop -c heated.nc -ref inpcrd -r equilibrated_1.nc -o equilibration_1.log
+module load StdEnv/2023 amber/22
+srun pmemd.MPI -O -i equilibrate_1.in \
+        -p prmtop \
+        -c heated.nc \
+        -ref inpcrd \
+        -r equilibrated_1.nc \
+        -o equilibration_1.log
 ~~~
 {: .language-bash}
 
@@ -275,16 +286,19 @@ This run takes about 3 minutes on 4 CPUs.
 Submission script for GPU job *submit_1_cuda.sh*:
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=1000 --time=3:0:0 --ntasks=1 --gpus-per-node=1
-ml --force purge
+#SBATCH --mem-per-cpu=1000M
+#SBATCH --time=3:00:00
+#SBATCH --ntasks=1
+#SBATCH --gpus-per-node=1
+module --force purge
 # cuda/12.2 is incompatible with the current vGPU driver
-ml arch/avx2 StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15 
+module load arch/avx2 StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15 
 pmemd.cuda -O -i equilibrate_1.in \
--p ../1RGG_chain_A.parm7 \
--c ../2_heating/heated.nc \
--ref ../1RGG_chain_A.rst7 \
--r equilibrated_1.nc \
--o equilibration_1.out
+        -p ../1RGG_chain_A.parm7 \
+        -c ../2_heating/heated.nc \
+        -ref ../1RGG_chain_A.rst7 \
+        -r equilibrated_1.nc \
+        -o equilibration_1.out
 ~~~
 {: .language-bash}
 
@@ -313,15 +327,18 @@ END
 Submission script *submit_2.sh*
 ~~~
 #!/bin/bash
-#SBATCH --mem-per-cpu=1000 --time=3:0:0 --ntasks=1 --gpus-per-node=1
-ml --force purge
-ml arch/avx2 StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15 
+#SBATCH --mem-per-cpu=1000M
+#SBATCH --time=3:00:00
+#SBATCH --ntasks=1
+#SBATCH --gpus-per-node=1
+module --force purge
+module load arch/avx2 StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 amber/20.12-20.15 
 pmemd.cuda -O -i equilibrate_2.in \
--p ../1RGG_chain_A.parm7 \
--c equilibrated_1.nc \
--r equilibrated_2.nc \
--x mdcrd_2.nc \
--o equilibration_2.out
+        -p ../1RGG_chain_A.parm7 \
+        -c equilibrated_1.nc \
+        -r equilibrated_2.nc \
+        -x mdcrd_2.nc \
+        -o equilibration_2.out
 ~~~
 {: .language-bash}
 
@@ -359,8 +376,8 @@ EOF
 Extract selected energy components. 
 ~~~
 cd ~/scratch/workshop_amber/example_04/3_equilibration
-ml purge
-ml StdEnv/2023 amber
+module purge
+module load StdEnv/2023 amber
 ~/bin/extract_energies.sh equilibration_2.log
 ~~~
 {: .language-bash}
@@ -373,8 +390,8 @@ ml StdEnv/2023 amber
 Go to Jupyter desktop
 ~~~
 cd ~/scratch/workshop_amber/example_04/3_equilibration
-ml purge
-ml StdEnv/2023 amber
+module purge
+module load StdEnv/2023 amber
 ~~~
 {: .language-bash}
 
@@ -498,7 +515,7 @@ amber.save("restart.gro")
 ~~~
 module purge
 # gromacs modules from StdEnv/2023 fail
-ml StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 gromacs/2022.3
+module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 gromacs/2022.3
 gmx grompp -p topol.top -c restart.gro -f gromacs_production.mdp -maxwarn 2
 ~~~
 {: .language-bash}

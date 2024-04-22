@@ -129,10 +129,9 @@ Input file for running PB and GB in serial
 
 ~~~
 #!/bin/bash
-#SBATCH --account=def-barakat
 #SBATCH --ntasks=10
-#SBATCH --mem-per-cpu=4000
-#SBATCH --time=3:0:0
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=3:00:00
 module purge
 module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 ambertools/23
 MMPBSA.py.MPI -O -i mmpbsa.in -o FINAL_RESULTS_MMPBSA.dat -sp ../../start.prmtop -cp complex.prmtop -rp receptor.prmtop -lp ligand.prmtop -y ../../../min/min.dcd
