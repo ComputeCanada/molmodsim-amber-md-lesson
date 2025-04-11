@@ -8,6 +8,7 @@
 # lc: Library Carpentry
 # cp: Carpentries (to use for instructor traning for instance)
 carpentry: "bst"
+show_comments: false
 
 # Overall title for pages.
 title: "Running Molecular Dynamics on Alliance clusters with AMBER"
