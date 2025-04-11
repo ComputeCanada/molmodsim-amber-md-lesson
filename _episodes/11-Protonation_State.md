@@ -16,6 +16,10 @@ keypoints:
 ---
 ### It is important to consider amino acid protonation states
 
+{% if jekyll.environment == "development" %}
+  This text only appears in development
+{% endif %}
+
 Setting up a simulation system requires assigning protonation states and, possibly, tautomers to the HIS residues. The protonation states of titratable amino acids (Arg, Lys, Tyr, Cys, His, Glu, Asp) depend on the local micro-environment and pH. A highly polar microenvironment will stabilize the charged form, while a less polar microenvironment will favor the neutral form. At physiological pH, TYR, LYS, CYS, and ARG are almost always in their standard protonation states, while GLU, ASP, and HIS can be in non-standard forms.
 {: .instructor_notes} 
 

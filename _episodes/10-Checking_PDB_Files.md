@@ -84,15 +84,25 @@ Some problems can be identified and corrected automatically (such as missing ato
 Let's consider some example protein PDB files. The first step is to connect to the training cluster. Sign in to Jupyter Hub **jupyter.moledyn.ace-net.training** and start a server with the following arguments:  
 - **4 CPUs** 
 - **4 hours** 
-- **default RAM (5504MB)**
-- **no GPUs**
+- **default RAM**
+- **1 GPUs**
 <br>
 
 #### Workshop data: 
 
-/project/def-sponsor00/workshop_amber_2024.tar.gz  
+On the training cluster copy archive in your home directory and unpack:
+~~~
+cd
+cp /project/def-sponsor00/workshop_amber_2024.tar.gz .
+tar xf workshop_amber_2024.tar.gz
+~~~
+{: .language-bash}
 
+Download link:
+~~~
 wget https://github.com/ComputeCanada/molmodsim-amber-md-lesson/releases/download/workshop-2021-04/workshop_amber_2024.tar.gz
+~~~
+{: .language-bash}
 
 ### Checking a molecular structure 
 [Check_structure](https://pypi.org/project/biobb-structure-checking/) is a command-line utility from [BioBB project](https://github.com/bioexcel/biobb) for exhaustive structure quality checking (residue chirality, amide orientation, vdw clashes, etc.).  Using this utility, you can perform manipulations with structures, such as selecting chains or conformations, removing components, mutating residues, adding missing atoms, adding hydrogens, etc. 
@@ -117,7 +127,7 @@ pip install biobb-structure-checking
 Using check_structure. 
 {: .self_study_text}
 ~~~
-cd ~/scratch/workshp_amber/example_01
+cd ~/workshp_amber/example_01
 check_structure commands # print help on commands
 check_structure -i 2qwo.pdb checkall 
 ~~~
@@ -213,7 +223,7 @@ Check conformations
 {: .self_study_text}
 
 ~~~
-cd ~/scratch/workshop_amber/example_02
+cd ~/workshop_amber/example_02
 check_structure -i 1ert.pdb checkall
 ~~~
 {: .language-bash}
@@ -287,7 +297,7 @@ For simulation preparation with the AMBER `tleap` program, cross-linked cysteine
 {: .self_study_text} 
 
 ~~~
-cd ~/scratch/workshop_amber/example_01
+cd ~/workshop_amber/example_01
 check_structure -i 2qwo.pdb -o output.pdb getss --mark all
 grep CYX output.pdb
 ~~~
