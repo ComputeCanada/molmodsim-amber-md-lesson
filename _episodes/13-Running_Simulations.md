@@ -17,7 +17,6 @@ keypoints:
 ### AMBER MD engines.
 Amber package includes two MD engines: SANDER and PMEMD. Both programs are available in serial and parallel versions. 
 
-
 #### SANDER
 {% if site.show_comments %}
 SANDER is a free simulation engine distributed with the AmberTools package. For parallel distributed simulations, it uses the MPI (message passing interface). The parallel version of Sander implements replicated data structure. 
@@ -36,7 +35,6 @@ PMEMD is an extensively revised version of SANDER available only in the commerci
 {% else %} 
 - PMEMD is an extensively revised version of SANDER available only in the commercial AMBER package.
 {% endif %} 
-
 
 #### GPU-Accelerated PMEMD
 {% if site.show_comments %}
