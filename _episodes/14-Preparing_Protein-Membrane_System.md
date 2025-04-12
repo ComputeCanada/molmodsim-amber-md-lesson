@@ -14,12 +14,14 @@ keypoints:
 
 ## Creating simulation systems with packmol-memgen
 ### AMBER Lipid force fields
+
+{% if site.show_comments %}
 Amber currently includes Lipid21 as its main membrane force field.  In this modular force field, lipids are modeled as polymers composed of a headgroup and acyl tails. Essentially, this means that each headgroup and tail are independent modules, analogous to protein residues. Each lipid molecule is composed of a tail analogous to an "N-terminal", a central headgroup and another tail analogous to a "C-terminal". You can combine any headgroup with any pair of tails in this force field. Ok, now you should have an idea how the lipids are represented in the Lipid21 force field, and what lipids you can include in a simulation. 
-{: .instructor_notes}
+{% else %}
 
 - Lipid21 is the main membrane force field
 - Lipids are modeled as polymers composed of a headgroup and acyl tails
-{: .self_study_text}
+{% endif %}
 
 Known Issues: 
 Using MC barostat with hard LJ cutoff is known to cause bilayer deformation. It is recommended to use an LJ force switch when running simulations with the MC barostat.[Gomez, 2021](https://onlinelibrary.wiley.com/doi/abs/10.1002/jcc.26798)
@@ -33,7 +35,7 @@ Using MC barostat with hard LJ cutoff is known to cause bilayer deformation. It 
 - What lipids are available?
 
 ~~~
-cd ~/scratch/workshop_amber/example_06
+cd ~/workshop_amber/example_06
 module purge
 module load StdEnv/2023 ambertools
 packmol-memgen --available_lipids 

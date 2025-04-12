@@ -12,17 +12,17 @@ objectives:
 keypoints:
 - "Small errors in the input structure may cause MD simulations to became unstable or give unrealistic results."
 ---
-
+{% if site.show_comments %}
 Many commercial programs and interactive graphical interfaces such as CHARMM-GUI are available to help prepare a simulation system. These tools are easy to use and do not require as much learning effort as command-line tools, however, the functionality is limited, and results obtained with WEB/GUI tools are not reproducible and prone to human error.  Therefore, we will focus on preparing the system using only scriptable command-line-driven tools. This lesson is intended to expose you to various methods that can be used to create a reproducible molecular modeling workflow by automating preparation and simulation steps. One benefit of this approach is that once a workflow script has been developed, it can be easily adapted to other systems or conditions (for example, if a new pdb file is released, you can prepare a new simulation system with one click).
-{: .instructor_notes} 
+{% endif %}
 
 #### What data is needed to setup a simulation?
+{% if site.show_comments %}
 Let's have a closer look at what data is needed to setup a simulation. Molecular simulation systems are typically built using PDB files. PDB files are essentially plain text files. The PDB format defines many types of records, describing structural information, crystallographic experiments, secondary structures, missing residues and other information. For setting up a simulation system, preparation programs only need the coordinate section, which consists of ATOM, HETATM, and TER records.
-{: .instructor_notes} 
-
+{% else %}
  - Molecular simulation systems are typically prepared from PDB files. 
  - For a simulation to be setup, only the coordinate section consisting of ATOM, HETATM, and TER records is required.
-{: .self_study_text} 
+{% endif %}
 
 ```
          atomName  chain            coordinates                temperatureFactor (beta)
@@ -40,32 +40,30 @@ TER  - indicates the end of a chain
 
 HETATM  832  O   HOH A 106      32.125   6.262  24.443  1.00 21.18    
 ```
-
+{% if site.show_comments %}
 The lines beginning with "ATOM" represent the atomic coordinates for standard amino acids and nucleotides. "TER" records indicate the end of a chain. For chemical compounds other than proteins or nucleic acids, the "HETATM" record type is used. Records of both types use a simple fixed-column format explained [here](https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM). 
-{: .instructor_notes} 
-
+{% else %}
 - The lines beginning with "ATOM" represent the atomic coordinates for standard amino acids and nucleotides.
 - For chemical compounds other than proteins or nucleic acids, the "HETATM" record type is used.
 - Records of both types use a simple fixed-column format explained [here](https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM). 
 - "TER" records indicate which atoms are at the terminal of a protein chain.
-{: .self_study_text} 
-
+{% endif %} 
+{% if site.show_comments %}
 Before we can successfully import a PDB file into LEAP and produce the system topology file, we need to ensure that the original PDB files are free from errors and the molecules we want to simulate are chemically correct.
-{: .instructor_notes} 
+{% endif %} 
 
 ## Important Things to Check in a PDB File
-
+{% if site.show_comments %}
 To simulate molecules correctly we need to ensure that:
-{: .instructor_notes} 
 - the original input PDB files are error-free 
 - the molecules we want to simulate are chemically correct
-{: .instructor_notes} 
-
+{% else %}
 A correct simulation of molecules requires error-free input PDB files.
-{: .self_study_text} 
+{% endif %}
 
+{% if site.show_comments %}
 Small errors in the input structure may cause MD simulations to become unstable or give unrealistic results.
-{: .instructor_notes} 
+{% endif %}
 
 There are several common problems with PDB files, including:
 - presence of non-protein molecules (crystallographic waters, ligands, modified amino acids, etc.)
@@ -76,9 +74,9 @@ There are several common problems with PDB files, including:
 - multiple copies of the same protein chains
 - di-sulfide bonds
 - wrong assignment of the N and O atoms in the amide groups of ASN and GLN, and the N and C atoms in the imidazole ring of HIS
-
+{% if site.show_comments %}
 Some problems can be identified and corrected automatically (such as missing atoms and some steric clashes), while others may have more than one solution and require your decision. In this section, you will learn how to recognize and correct problems associated with multiple chains, alternate conformations, non-protein molecules, and disulphide bonds.
-{: .instructor_notes} 
+{% endif %}
 
 #### Connect to the training cluster
 Let's consider some example protein PDB files. The first step is to connect to the training cluster. Sign in to Jupyter Hub **jupyter.moledyn.ace-net.training** and start a server with the following arguments:  
@@ -105,17 +103,16 @@ wget https://github.com/ComputeCanada/molmodsim-amber-md-lesson/releases/downloa
 {: .language-bash}
 
 ### Checking a molecular structure 
+{% if site.show_comments %}
 [Check_structure](https://pypi.org/project/biobb-structure-checking/) is a command-line utility from [BioBB project](https://github.com/bioexcel/biobb) for exhaustive structure quality checking (residue chirality, amide orientation, vdw clashes, etc.).  Using this utility, you can perform manipulations with structures, such as selecting chains or conformations, removing components, mutating residues, adding missing atoms, adding hydrogens, etc. 
-{: .instructor_notes}  
-
+{% else %}
 - [Check_structure](https://pypi.org/project/biobb-structure-checking/) is a command-line utility from [BioBB project](https://github.com/bioexcel/biobb) for exhaustive structure quality checking.
-{: .self_study_text}
-
+{% endif %}
+{% if site.show_comments %}
 Check_structure is a python module. Python modules are installed in user accounts in a python virtual environment.
-{: .instructor_notes}  
-
+{% else %}
 Installing check_structure. 
-{: .self_study_text}
+{% endif %}
 ~~~
 module load StdEnv/2023 python scipy-stack
 virtualenv ~/env-biobb
@@ -125,7 +122,6 @@ pip install biobb-structure-checking
 {: .language-bash}
 
 Using check_structure. 
-{: .self_study_text}
 ~~~
 cd ~/workshp_amber/example_01
 check_structure commands # print help on commands
@@ -150,8 +146,9 @@ No severe clashes detected
 {: .output}
 
 #### Removing Non-Protein Molecules
+{% if site.show_comments %}
 A PDB file containing any molecules other than proteins or nucleic acids needs special treatment. It is common for PDB files to contain solvents, ions, lipid molecules, protein co-factors, e.t.c. In some cases, these extra components are necessary for the protein function and should be included in the simulation. It is common to add compounds to facilitate crystallization. These compounds are usually not necessary for simulation. In this introductory lesson, we won't consider them.
-{: .instructor_notes} 
+{% endif %}
 
 Let's remove ligands and save the output in a new file called "protein.pdb".
 ~~~
@@ -213,14 +210,13 @@ check_structure -i 2qwo.pdb -o protein.pdb ligands --remove all
 
 
 #### Checking PDB Files for alternate conformations.
-Some PDB files may contain alternate positions of residue side chains. Only one conformation is acceptable for molecular dynamics simulation. Standard simulation preparation programs such as `pdb2gmx` or `pdb4amber` will automatically select the first conformation labeled "A" in the "altLoc" column (column 17). 
-{: .instructor_notes}
-
+{% if site.show_comments %}
+Some PDB files may contain alternate positions of residue side chains. Only one conformation is acceptable for molecular dynamics simulation. Standard simulation preparation programs such as `pdb2gmx` or `pdb4amber` will automatically select the first conformation labeled "A" in the "altLoc" column (column 17).  
+<br>
 Sometimes you may want to compare simulations starting from different initial conformations. If you want to select a particular conformation, all conformations except the desired one must be removed from a PDB file.
-{: .instructor_notes}
-
+{% else %}
 Check conformations
-{: .self_study_text}
+{% endif %}
 
 ~~~
 cd ~/workshop_amber/example_02
@@ -286,15 +282,14 @@ check_structure -i 1ert.pdb -o output.pdb altloc --select A20:A,A43:B,A90:B
 {:.challenge}
 
 #### Checking PDB Files for cross-linked cysteines.
+{% if site.show_comments %}
 Disulfide bonds are covalent bonds between the sulfur atoms of two cysteine residues. They are very important for the stabilization of protein structure.
-Disulfide bonds are easy to spot in PDB files with any visualization program. 
-{: .instructor_notes} 
+Disulfide bonds are easy to spot in PDB files with any visualization program.  <br>
 
 For simulation preparation with the AMBER `tleap` program, cross-linked cysteines must be renamed from "CYS" to "CYX" to distinguish them from normal cysteines. Check_structure can detect and mark disulphide bonds.
-{: .instructor_notes} 
-
+{% else %}
 - For simulation preparation with the AMBER, cross-linked cysteines must be renamed from "CYS" to "CYX" 
-{: .self_study_text} 
+{% endif %} 
 
 ~~~
 cd ~/workshop_amber/example_01
