@@ -132,7 +132,7 @@ Energy minimization
 imin=1, ntmin=0, maxcyc=1000,   ! Minimization, method, number of cycles 
 ntpr=5,                         ! Print energies every ntpr steps
 ntr=1,                          ! Use harmonic cartesian restraints   
-restraint_wt=10.0,              ! Restraint force kcal/mol
+restraint_wt=10.0,              ! Restraint force kcal/mol/A^2
 restraintmask="(:1-96)&(@CA,N,O)",
 &end
 END
@@ -202,7 +202,7 @@ ntpr=100,                               ! Print energies every ntpr steps
 ntwx=1000,                              ! Write coordinates every ntws steps
 nstlim=10000,                           ! Simulate nstlim steps
 ntr=1,                                  ! Use harmonic cartesian restraints 
-restraint_wt=10,                        ! Restraint force kcal/mol
+restraint_wt=10,                        ! Restraint force kcal/mol/A^2
 restraintmask="(:1-96)&(@CA,N,O)",
 &end
 END
@@ -252,7 +252,7 @@ ntpr=100,                           ! Print energies every ntpr steps
 ntwx=1000,                          ! Save coordinates every ntwx steps
 nstlim=5000,                        ! Simulate nstlim steps
 ntr=1,                              ! Turn on restraints
-restraint_wt=10,                    ! Restraint force, kcal/mol
+restraint_wt=10,                    ! Restraint force, kcal/mol/A^2
 restraintmask="(:1-96)&(@CA,N,O)",
 &end
 END
@@ -524,7 +524,7 @@ Because NAMD natively supports AMBER topology files, simulating a system prepare
 
 In the worksop data, you will find example simulation input files for minimization, heating and equilibration:
 ~~~
-ls ~/scratch/workshop_amber/namd/sim_namd
+ls ~/workshop_amber/namd/sim_namd
 1-minimization  2-heating  3-equilibration  4-production
 ~~~
 {: .language-bash}

@@ -46,7 +46,7 @@ The lines beginning with "ATOM" represent the atomic coordinates for standard am
 - The lines beginning with "ATOM" represent the atomic coordinates for standard amino acids and nucleotides.
 - For chemical compounds other than proteins or nucleic acids, the "HETATM" record type is used.
 - Records of both types use a simple fixed-column format explained [here](https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM). 
-- "TER" records indicate which atoms are at the terminal of a protein chain.
+- "TER" records indicate which atoms are at the end of a protein chain.
 {% endif %} 
 {% if site.show_comments %}
 Before we can successfully import a PDB file into LEAP and produce the system topology file, we need to ensure that the original PDB files are free from errors and the molecules we want to simulate are chemically correct.
@@ -75,11 +75,12 @@ There are several common problems with PDB files, including:
 - di-sulfide bonds
 - wrong assignment of the N and O atoms in the amide groups of ASN and GLN, and the N and C atoms in the imidazole ring of HIS
 {% if site.show_comments %}
-Some problems can be identified and corrected automatically (such as missing atoms and some steric clashes), while others may have more than one solution and require your decision. In this section, you will learn how to recognize and correct problems associated with multiple chains, alternate conformations, non-protein molecules, and disulphide bonds.
+Some problems can be identified and corrected automatically (such as missing atoms and some steric clashes), while others may have more than one solution and require your decision. In this section, you will learn how to recognize and correct problems associated with multiple chains, alternate conformations, non-protein molecules, and disulphide bonds.<br>   
+Let's consider some example protein PDB files. The first step is to connect to the training cluster.
 {% endif %}
 
 #### Connect to the training cluster
-Let's consider some example protein PDB files. The first step is to connect to the training cluster. Sign in to Jupyter Hub **jupyter.moledyn.ace-net.training** and start a server with the following arguments:  
+Sign in to the training cluster [jupyter.md-workshop.ace-net.training](https://jupyter.md-workshop.ace-net.training). Start a server with the following arguments:  
 - **4 CPUs** 
 - **4 hours** 
 - **default RAM**
@@ -106,7 +107,8 @@ tar xf workshop_amber_2024.tar.gz
 - [Check_structure](https://pypi.org/project/biobb-structure-checking/) is a command-line utility from [BioBB project](https://github.com/bioexcel/biobb) for exhaustive structure quality checking.
 {% endif %}
 {% if site.show_comments %}
-Check_structure is a python module. Python modules are installed in user accounts in a python virtual environment.
+Check_structure is a python module. Python modules are installed in user accounts in a python virtual environment.  
+On the training cluster unset PIP_PREFIX !! 
 {% else %}
 Installing check_structure. 
 {% endif %}
@@ -120,7 +122,7 @@ pip install biobb-structure-checking
 
 Using check_structure. 
 ~~~
-cd ~/workshp_amber/example_01
+cd ~/workshop_amber/example_01
 check_structure commands # print help on commands
 check_structure -i 2qwo.pdb checkall 
 ~~~
@@ -301,3 +303,5 @@ grep CYX output.pdb
 [MDWeb](http://mmb.irbbarcelona.org/MDWeb2) server can help to identify problems with PDB files and visually inspect them. It can also perform complete simulation setup, but options are limited and waiting time in the queue may be quite long.
 
 [CHARMM-GUI](http://www.charmm-gui.org) can be used to generate input files for simulation with CHARMM force fields. CHARMM-GUI offers useful features, for example the "Membrane Builder" and the "Multicomponent Assembler".
+
+

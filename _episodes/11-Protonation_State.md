@@ -92,13 +92,29 @@ Let's change ASP20 and ASP26 in the file 1ert.pdb to the neutral form ASH.
 ~~~
 cd ~/workshop_amber/example_02
 check_structure -i 1ert.pdb -o 1ert_protonated.pdb \
-command_list --list "\
-add_hydrogen --list A:asp20ash,A:asp26ash --add_mode list;\
+command_list --list \
+"add_hydrogen --add_mode list --list A:asp20ash,A:asp26ash; \
 water --remove yes"
 ~~~
 {: .language-bash}
 
+
 You can verify that residues are changed by grepping ASH.
+
+{% if site.show_comments %}
+You can read commands from a file:
+~~~
+check_structure -i 1ert.pdb -o 1ert_protonated.pdb command_list --list check.in
+~~~
+{: .language-bash}
+
+~~~
+# File: check.in
+add_hydrogen --add_mode list --list A:asp20ash,A:asp26ash
+water --remove yes
+~~~
+{: .file-content}
+{% endif %}
 
 >## Selecting protonation states with *VMD*.
 >
@@ -150,13 +166,13 @@ The use of constant protonation states in molecular dynamics simulations has its
 ~~~
 cd ~/workshop_amber/example_03
 check_structure -i 1rgg.pdb -o 1RGG_chain_A_prot.pdb \
-command_list --list "\
-chains --select A;\
-add_hydrogen --list A:his53hip,A:asp79ash --add_mode list;\
-altloc --select A5:B,A54:B,A6:A,A13:A,A42:A,A85:A,A91:A;\
-getss --mark all;\
-ligands --remove all;\
-water --remove yes"
+    command_list --list "\
+        chains --select A;\
+        add_hydrogen --list A:his53hip,A:asp79ash --add_mode list;\
+        altloc --select A5:B,A54:B,A6:A,A13:A,A42:A,A85:A,A91:A;\
+        getss --mark all;\
+        ligands --remove all;\
+        water --remove yes"
 ~~~
 {: .language-bash}
 
