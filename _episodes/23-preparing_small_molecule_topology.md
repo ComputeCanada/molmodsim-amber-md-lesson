@@ -117,6 +117,9 @@ ante-MMPBSA.py -p ../../start.prmtop -s '!(:214-456,669-1029)' -c complex.prmtop
 ante-MMPBSA.py -p complex.prmtop -n ':1-243' -l ligand.prmtop -r receptor.prmtop 
 ~~~
 
+-s Amber mask of atoms needed to be stripped from PRMTOP to make the COMPLEX topology file
+-n Amber mask of atoms needed to be stripped from COMPLEX to create LIGAND.
+
 ~~~
 Input file for running PB and GB in serial
 &general
