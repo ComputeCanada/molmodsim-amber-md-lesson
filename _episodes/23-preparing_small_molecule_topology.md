@@ -19,7 +19,7 @@ keypoints:
 - Convert SDF to PDB using Open Babel and change residue name: 
 
 ~~~
-cd ~/scratch/workshop_amber/example_05
+cd ~/workshop_amber/example_05
 module purge
 module load StdEnv/2023 openbabel
 obabel Conformer3D_COMPOUND_CID_147023.sdf -O hexanediol.pdb
@@ -92,18 +92,20 @@ Activity 2: Compare binding  free energy calculated using different charge sets.
 - Translates force field to GROMACS 
 
 
-Install ACPYPE:
-~~~
-module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 ambertools/23
-virtualenv env-acpype
-source env-acpype/bin/activate
-pip install acpype
-~~~
-
-Create force field files:
+[Installing and using ACPYPE on the Aliiance clusters](https://docs.alliancecan.ca/wiki/ACPYPE)
 
 ~~~
-acpype -i HDX.pdb -n 0
+module load  python  openbabel
+virtualenv ~/venv_acpype
+source ~/venv_acpype/bin/activate
+pip install --no-index acpype
+~~~
+{: .language-bash}
+
+
+Create force field files:  
+~~~
+acpype -i HEZ.pdb -n 0
 ~~~
 
 ## Free energy calculations
