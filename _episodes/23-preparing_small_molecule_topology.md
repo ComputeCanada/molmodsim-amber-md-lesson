@@ -103,7 +103,6 @@ pip install --no-index acpype
 {: .language-bash}
 
 
-
 Create force field files:  
 ~~~
 acpype -i HEZ.pdb -n 0
@@ -117,7 +116,7 @@ ante-MMPBSA.py -p ../../start.prmtop -s '!(:214-456,669-1029)' -c complex.prmtop
 ante-MMPBSA.py -p complex.prmtop -n ':1-243' -l ligand.prmtop -r receptor.prmtop 
 ~~~
 
--s Amber mask of atoms needed to be stripped from PRMTOP to make the COMPLEX topology file
+-s Amber mask of atoms needed to be stripped from PRMTOP to make the COMPLEX topology file   
 -n Amber mask of atoms needed to be stripped from COMPLEX to create LIGAND.
 
 ~~~
