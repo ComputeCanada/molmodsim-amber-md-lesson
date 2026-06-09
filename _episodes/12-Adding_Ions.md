@@ -147,7 +147,7 @@ Save the following commands in a file, e.g. solvate_1RRG.leap
 ~~~
 source leaprc.water.opc
 source leaprc.protein.ff19SB
-s = loadpdb ../exanmple_03/1RGG_chain_A_prot.pdb
+s = loadpdb ../example_03/1RGG_chain_A_prot.pdb
 addions s Na+ 0
 solvatebox s SPCBOX 15 iso
 addionsrand s Na+ 24 Cl- 24
